@@ -17,6 +17,16 @@ This platform is a multi-sided marketplace + operating/data layer connecting pro
 
 This folder is the repository snapshot of Notion content and is used as the authoritative execution reference for creating Issues/Milestones.
 
+### مصدر الحقيقة / Source of Truth
+
+**المصدر الوحيد المعتمد:** [`docs/_source-ar.md`](../_source-ar.md)
+
+جميع محتويات هذا المجلد مشتقة من الملف المرجعي `docs/_source-ar.md` والذي يمثل المصدر الوحيد الموثوق لجميع الوثائق الموجودة في هذا المجلد.
+
+**Authoritative Source:** [`docs/_source-ar.md`](../_source-ar.md)
+
+All content in this folder is derived from the authoritative source file `docs/_source-ar.md`, which represents the single source of truth for all documentation in this folder.
+
 ## جدول المحتويات / Table of Contents
 
 1. [الملخص التنفيذي / Executive Summary](./00-executive-summary.md)
@@ -33,4 +43,9 @@ This folder is the repository snapshot of Notion content and is used as the auth
 12. [حوكمة العمليات / Operations Governance](./11-operations-governance.md)
 13. [الاقتصاديات / Economics](./12-economics.md)
 14. [قاموس القياس / Measurement Dictionary](./13-measurement-dictionary.md)
-15. [المصطلحات / Glossary](./glossary.md)
+15. [العقائد / Doctrines](./14-doctrines.md)
+16. [آلية التحسين / Improvement Loop](./15-improvement-loop.md)
+17. [الثغرات وكيف نغلقها / Gaps and Closures](./16-gaps-and-closures.md)
+18. [التحسينات الحاسمة / Critical Improvements](./17-critical-improvements.md)
+19. [السجلات الاستراتيجية / Strategic Logs](./18-strategic-logs.md)
+20. [المصطلحات / Glossary](./glossary.md)
