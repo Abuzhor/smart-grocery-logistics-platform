@@ -1,0 +1,207 @@
+{
+  "repository": "Abuzhor/smart-grocery-logistics-platform",
+  "labels": [
+    {
+      "name": "phase:0-bootstrap",
+      "color": "0E8A16",
+      "description": "PHASE 0: Project bootstrap and planning setup"
+    },
+    {
+      "name": "phase:1-foundation",
+      "color": "1D76DB",
+      "description": "PHASE 1: Core platform foundation"
+    },
+    {
+      "name": "phase:2-mvp",
+      "color": "5319E7",
+      "description": "PHASE 2: MVP features and launch"
+    },
+    {
+      "name": "phase:3-scale",
+      "color": "D93F0B",
+      "description": "PHASE 3: Scaling and optimization"
+    },
+    {
+      "name": "phase:4-global",
+      "color": "FBCA04",
+      "description": "PHASE 4: Global expansion"
+    },
+    {
+      "name": "domain:catalog",
+      "color": "C5DEF5",
+      "description": "Catalog and product management"
+    },
+    {
+      "name": "domain:inventory",
+      "color": "BFD4F2",
+      "description": "Inventory management and tracking"
+    },
+    {
+      "name": "domain:ordering",
+      "color": "D4C5F9",
+      "description": "Order capture and orchestration"
+    },
+    {
+      "name": "domain:fulfillment",
+      "color": "C2E0C6",
+      "description": "Fulfillment and picking operations"
+    },
+    {
+      "name": "domain:routing",
+      "color": "FEF2C0",
+      "description": "Route optimization and delivery"
+    },
+    {
+      "name": "domain:partner",
+      "color": "F9D0C4",
+      "description": "Partner integration and management"
+    },
+    {
+      "name": "domain:workforce",
+      "color": "E99695",
+      "description": "Workforce and driver management"
+    },
+    {
+      "name": "domain:operations",
+      "color": "D73A4A",
+      "description": "Operations and monitoring"
+    },
+    {
+      "name": "domain:compliance",
+      "color": "0052CC",
+      "description": "Compliance and regulatory"
+    },
+    {
+      "name": "domain:platform",
+      "color": "5319E7",
+      "description": "Platform infrastructure"
+    },
+    {
+      "name": "type:documentation",
+      "color": "0075CA",
+      "description": "Documentation and planning"
+    },
+    {
+      "name": "type:architecture",
+      "color": "1D76DB",
+      "description": "Architecture and design decisions"
+    },
+    {
+      "name": "type:feature",
+      "color": "A2EEEF",
+      "description": "New feature implementation"
+    },
+    {
+      "name": "type:infrastructure",
+      "color": "D876E3",
+      "description": "Infrastructure and DevOps"
+    },
+    {
+      "name": "type:testing",
+      "color": "BFD4F2",
+      "description": "Testing and quality assurance"
+    },
+    {
+      "name": "type:security",
+      "color": "D93F0B",
+      "description": "Security and vulnerability fixes"
+    },
+    {
+      "name": "type:compliance-task",
+      "color": "0052CC",
+      "description": "Compliance implementation task"
+    },
+    {
+      "name": "priority:critical",
+      "color": "B60205",
+      "description": "Critical - must be done immediately"
+    },
+    {
+      "name": "priority:high",
+      "color": "D93F0B",
+      "description": "High priority"
+    },
+    {
+      "name": "priority:medium",
+      "color": "FBCA04",
+      "description": "Medium priority"
+    },
+    {
+      "name": "priority:low",
+      "color": "0E8A16",
+      "description": "Low priority"
+    },
+    {
+      "name": "category:grocery",
+      "color": "C2E0C6",
+      "description": "Grocery and food items"
+    },
+    {
+      "name": "category:cold-chain",
+      "color": "BFD4F2",
+      "description": "Cold chain and refrigeration"
+    },
+    {
+      "name": "category:regulated",
+      "color": "0052CC",
+      "description": "Regulated items (age, prescription)"
+    },
+    {
+      "name": "category:services",
+      "color": "FEF2C0",
+      "description": "Service delivery (non-physical)"
+    },
+    {
+      "name": "category:b2b",
+      "color": "5319E7",
+      "description": "Business-to-business operations"
+    },
+    {
+      "name": "gate:reliability",
+      "color": "0E8A16",
+      "description": "Reliability gate criteria"
+    },
+    {
+      "name": "gate:economics",
+      "color": "FBCA04",
+      "description": "Economics and unit profitability gate"
+    },
+    {
+      "name": "gate:trust",
+      "color": "D93F0B",
+      "description": "Trust and fraud prevention gate"
+    },
+    {
+      "name": "gate:compliance",
+      "color": "0052CC",
+      "description": "Compliance and regulatory gate"
+    }
+  ],
+  "milestones": [
+    {
+      "title": "PHASE 0: Bootstrap & Planning",
+      "due_days": 30,
+      "description": "Project setup, planning artifacts, GitHub automation, initial documentation structure"
+    },
+    {
+      "title": "PHASE 1: Foundation",
+      "due_days": 90,
+      "description": "Core platform architecture, basic catalog, ordering, and fulfillment modules"
+    },
+    {
+      "title": "PHASE 2: MVP Launch",
+      "due_days": 180,
+      "description": "Single-city pilot with 2 categories, end-to-end workflows, payment integration"
+    },
+    {
+      "title": "PHASE 3: Scale & Optimize",
+      "due_days": 270,
+      "description": "Expand to 5-7 categories in city 1, second city launch, operational excellence"
+    },
+    {
+      "title": "PHASE 4: Global Expansion",
+      "due_days": 365,
+      "description": "Multi-country expansion, policy engine, compliance framework, localization"
+    }
+  ]
+}
