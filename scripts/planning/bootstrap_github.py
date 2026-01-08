@@ -57,6 +57,15 @@ def get_github_token() -> str:
         sys.exit(1)
     return token
 
+def check_dependencies():
+    """Check required dependencies"""
+    try:
+        import requests
+    except ImportError:
+        print_color(Colors.RED, "Error: 'requests' library not installed")
+        print_color(Colors.RED, "Install with: pip install requests")
+        sys.exit(1)
+
 class GitHubGraphQLClient:
     """GitHub GraphQL API client"""
     
@@ -82,7 +91,7 @@ class GitHubGraphQLClient:
         
         if response.status_code != 200:
             print_color(Colors.RED, f"GraphQL request failed: {response.status_code}")
-            print_color(Colors.RED, response.text)
+            print_color(Colors.RED, "Check your GH_TOKEN and permissions. Ensure token has 'project' scope.")
             sys.exit(1)
         
         result = response.json()
@@ -355,6 +364,9 @@ def main():
     """Main execution"""
     print_header(f"GitHub Projects v2 Bootstrap for {REPO_OWNER}/{REPO_NAME}")
     
+    # Check dependencies
+    check_dependencies()
+    
     # Get GitHub token
     token = get_github_token()
     client = GitHubGraphQLClient(token)
@@ -444,7 +456,7 @@ def main():
                 added_count += 1
             except Exception as e:
                 # Issue might already be in project
-                print_color(Colors.YELLOW, f"  ↻ Issue #{issue['number']} already in project or error: {str(e)[:50]}")
+                print_color(Colors.YELLOW, f"  ↻ Issue #{issue['number']} skipped (already in project or permission error)")
         
         print()
         print_color(Colors.GREEN, f"✓ Added {added_count} issues to project")

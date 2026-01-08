@@ -29,7 +29,8 @@ export GITHUB_REPOSITORY=Abuzhor/smart-grocery-logistics-platform
 - ✓ Idempotent - safe to re-run multiple times
 - ✓ Creates 31 labels across 6 categories
 - ✓ Creates 5 milestones (PHASE 0-4)
-- ✓ Creates issues with full traceability to Notion export
+- ✓ Creates 3 sample issues (#1-3) with full traceability
+- ⚠️ **Note**: Creates 3 sample issues only. Remaining 37 issues need manual creation or script extension
 - ✓ Prints summary with GitHub URLs
 
 **What it creates:**
@@ -49,13 +50,11 @@ export GITHUB_REPOSITORY=Abuzhor/smart-grocery-logistics-platform
    - PHASE 3: Scale & Optimize (+270 days)
    - PHASE 4: Global Expansion (+365 days)
 
-3. **Issues** (~40 issues):
-   - Meta issue for PHASE 0 tracking
-   - Bootstrap and planning issues
-   - Foundation infrastructure issues
-   - MVP feature issues
-   - Scaling and optimization issues
-   - Global expansion issues
+3. **Issues** (3 sample issues):
+   - Issue #1: Meta issue for PHASE 0 tracking
+   - Issue #2: Bootstrap GitHub Project Automation
+   - Issue #3: Define Vision and North Star Metrics
+   - ⚠️ **Remaining 37 issues** documented in execution plan but not auto-created
 
 ### bootstrap_github.py
 

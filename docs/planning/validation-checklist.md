@@ -40,11 +40,12 @@ This document tracks the validation and testing status of the PHASE 0 bootstrap 
 - [ ] All 5 milestones created successfully
 - [ ] Meta issue (#1) created successfully
 - [ ] Sample issues (#2-3) created successfully
+- [ ] Script displays clear warning about 3 sample issues vs 40 total
 - [ ] Script prints summary with GitHub URLs
 - [ ] Script can be re-run without errors (idempotency test)
 - [ ] Verify labels at: `https://github.com/Abuzhor/smart-grocery-logistics-platform/labels`
 - [ ] Verify milestones at: `https://github.com/Abuzhor/smart-grocery-logistics-platform/milestones`
-- [ ] Verify issues at: `https://github.com/Abuzhor/smart-grocery-logistics-platform/issues`
+- [ ] Verify 3 issues created at: `https://github.com/Abuzhor/smart-grocery-logistics-platform/issues`
 
 ### bootstrap_github.py Execution
 - [ ] Script runs without syntax errors
@@ -87,14 +88,18 @@ For each created issue, manually set (or via API):
 
 ## Issue Creation Completion
 
-The current bootstrap script creates sample issues. To complete the full set:
+⚠️ **IMPORTANT**: The bootstrap script creates **3 sample issues only** (#1-3), not all 40.
+
+### Current Status
+- ✅ Issues #1-3 created by script (meta issue + 2 examples)
+- ⚠️ Issues #4-40 documented in execution plan but NOT auto-created
 
 ### Option 1: Extend bootstrap_github.sh
 - [ ] Add issue templates for remaining 37 issues (see execution plan)
 - [ ] Re-run script to create all issues
 
-### Option 2: Manual Creation
-- [ ] Create remaining issues manually using execution plan as template
+### Option 2: Manual Creation (Recommended)
+- [ ] Create remaining 37 issues manually using execution plan as template
 - [ ] Ensure all issues include:
   - [ ] Clear title matching execution plan
   - [ ] Complete description with objectives, deliverables, acceptance criteria
@@ -177,7 +182,8 @@ PHASE 0 bootstrap is successful when:
 - [x] Scripts are created, tested, and documented
 - [ ] All labels are created (31 total)
 - [ ] All milestones are created (5 total)
-- [ ] All issues are created (40 total)
+- [ ] **3 sample issues created** (#1-3) with full traceability
+- [ ] **Remaining 37 issues** (#4-40) created manually or via script extension
 - [ ] Projects v2 board is created and configured
 - [ ] All issues are added to project board
 - [ ] Traceability is complete (all issues → Notion export)

@@ -8,6 +8,10 @@ This document summarizes all deliverables for PHASE 0: transforming Notion expor
 **Branch**: `phase-0-notion-to-github`  
 **Target**: Merge to `main` after validation
 
+> ⚠️ **IMPORTANT NOTE**: The `bootstrap_github.sh` script creates **3 sample issues only** (#1-3), not all 40 issues.  
+> The remaining 37 issues are fully documented in the execution plan and must be created manually or by extending the script.  
+> See "Issue Creation Completion" section below for details.
+
 ---
 
 ## Deliverable 1: Execution Plan Document ✅
@@ -66,7 +70,8 @@ This document summarizes all deliverables for PHASE 0: transforming Notion expor
 - ✅ **Uses GitHub CLI**: `gh` commands for labels, milestones, issues
 - ✅ **Creates labels**: All 31 labels from taxonomy
 - ✅ **Creates milestones**: All 5 milestones with due dates
-- ✅ **Creates issues**: Meta issue and sample issues with full traceability
+- ✅ **Creates issues**: 3 sample issues (#1-3) with full traceability
+- ⚠️ **Note**: Creates 3 sample issues only (not all 40). See "Issue Creation Completion" below.
 - ✅ **Prints output**: Colored output with GitHub URLs for all created artifacts
 - ✅ **Error handling**: Validates prerequisites and authentication
 
@@ -235,6 +240,44 @@ Every issue includes:
 
 ---
 
+## Issue Creation Completion
+
+The current `bootstrap_github.sh` script creates **3 sample issues** to demonstrate the pattern:
+- Issue #1: PHASE 0 – Notion → GitHub execution plan (meta issue)
+- Issue #2: Bootstrap GitHub Project Automation
+- Issue #3: Define Vision and North Star Metrics
+
+**To create the remaining 37 issues**, choose one of these options:
+
+### Option 1: Extend the Script (Recommended for bulk creation)
+Add issue templates to `bootstrap_github.sh` following the existing pattern:
+```bash
+# After the existing issues, add:
+ISSUE_BODY=$(cat <<'EOF'
+# [Copy issue content from execution plan]
+EOF
+)
+ISSUE_4=$(create_issue "Issue Title" "$ISSUE_BODY" "labels" "Milestone")
+```
+
+### Option 2: Manual Creation (Recommended for selective creation)
+1. Open the execution plan: `docs/planning/PHASE-0-notion-to-github-execution-plan.md`
+2. For each issue #4-40:
+   - Copy the issue title, description, labels, and milestone
+   - Create manually via GitHub UI or `gh issue create`
+   - Ensure all links and traceability are preserved
+
+### Option 3: Batch Script (Advanced)
+Create a separate script that reads the execution plan and generates all issues programmatically.
+
+**Whichever option you choose**, ensure:
+- ✅ All KPI references link to correct Notion export files
+- ✅ All source documentation links are valid
+- ✅ Related issues are cross-referenced
+- ✅ Proper labels and milestones are assigned
+
+---
+
 ## Execution Status
 
 ### Completed ✅
@@ -242,19 +285,19 @@ Every issue includes:
 - [x] Label taxonomy defined (31 labels, 6 categories)
 - [x] Milestones defined (5 phases)
 - [x] Project board specification completed
-- [x] Bash script created and syntax validated
+- [x] Bash script created and syntax validated (creates 3 sample issues)
 - [x] Python script created and syntax validated
 - [x] Configuration file created
 - [x] Documentation written (README, validation checklist)
 - [x] Repository cleanup (.gitignore)
 
 ### Pending User Execution
-- [ ] Run `bootstrap_github.sh` to create labels, milestones, issues
+- [ ] Run `bootstrap_github.sh` to create labels, milestones, and 3 sample issues
 - [ ] Run `bootstrap_github.py` to create Projects v2 board
+- [ ] **Complete remaining 37 issues** (extend script or create manually from execution plan)
 - [ ] Manually configure project board views and automation
 - [ ] Manually populate custom fields for issues
 - [ ] Validate all links and traceability
-- [ ] Complete remaining 37 issues (or extend script)
 
 ---
 
