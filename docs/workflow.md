@@ -2,6 +2,9 @@
 
 Last updated: 2026-01-08
 
+## Planning Reference
+For authoritative requirements, operating plans, and execution frameworks, see [docs/notion-export/](./notion-export/), which serves as the repository snapshot of Notion content and is the source for creating Issues and Milestones.
+
 ## Branching Strategy
 - main is always releasable.
 - Use short-lived feature branches: feature/<short-description>.
