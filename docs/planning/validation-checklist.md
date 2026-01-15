@@ -5,9 +5,10 @@ This document tracks the validation and testing status of the PHASE 0 bootstrap 
 ## Pre-Execution Validation
 
 ### Script Syntax and Structure
+- [x] `generate_issues_json.py` - Python syntax validated
 - [x] `bootstrap_github.sh` - Bash syntax validated
 - [x] `bootstrap_github.py` - Python syntax validated
-- [x] Both scripts are executable (`chmod +x`)
+- [x] Scripts are executable (`chmod +x` for .sh)
 - [x] Scripts include proper error handling
 - [x] Scripts include usage documentation
 - [x] Scripts are idempotent (safe to re-run)
@@ -17,6 +18,7 @@ This document tracks the validation and testing status of the PHASE 0 bootstrap 
 - [x] All 31 labels defined (6 categories)
 - [x] All 5 milestones defined with due dates
 - [x] Configuration matches execution plan
+- [x] `issues.json` schema defined (40 issues)
 
 ### Documentation
 - [x] Execution plan document created (`PHASE-0-notion-to-github-execution-plan.md`)
@@ -34,30 +36,80 @@ This document tracks the validation and testing status of the PHASE 0 bootstrap 
 - [ ] Python `requests` library installed (`pip install requests`)
 - [ ] `GH_TOKEN` environment variable set (or `gh auth login` completed)
 
-### bootstrap_github.sh Execution
+### Step 1: generate_issues_json.py Execution
+- [ ] Script runs without syntax errors
+- [ ] Parses all 40 issue blocks from execution plan
+- [ ] Generates `scripts/planning/issues.json`
+- [ ] JSON is valid and well-formed
+- [ ] All 40 issues present in output
+- [ ] Breakdown by phase matches execution plan:
+  - [ ] PHASE 0: 10 issues
+  - [ ] PHASE 1: 10 issues
+  - [ ] PHASE 2: 9 issues
+  - [ ] PHASE 3: 5 issues
+  - [ ] PHASE 4: 6 issues
+- [ ] Each issue has all required fields (title, body, labels, milestone, project metadata)
+- [ ] Script can be re-run without errors (idempotency test)
+
+### Step 2: bootstrap_github.sh Execution
 - [ ] Script runs without syntax errors
 - [ ] All 31 labels created successfully
 - [ ] All 5 milestones created successfully
-- [ ] Meta issue (#1) created successfully
-- [ ] Sample issues (#2-3) created successfully
-- [ ] Script displays clear warning about 3 sample issues vs 40 total
 - [ ] Script prints summary with GitHub URLs
 - [ ] Script can be re-run without errors (idempotency test)
 - [ ] Verify labels at: `https://github.com/Abuzhor/smart-grocery-logistics-platform/labels`
 - [ ] Verify milestones at: `https://github.com/Abuzhor/smart-grocery-logistics-platform/milestones`
-- [ ] Verify 3 issues created at: `https://github.com/Abuzhor/smart-grocery-logistics-platform/issues`
 
-### bootstrap_github.py Execution
+### Step 3: bootstrap_github.py Execution (First Run)
 - [ ] Script runs without syntax errors
+- [ ] Successfully loads `issues.json` (40 issues)
+- [ ] Fetches existing milestones and creates milestone mapping
+- [ ] Creates all 40 issues with correct:
+  - [ ] Titles (matching execution plan exactly)
+  - [ ] Bodies (full markdown with objectives, acceptance criteria, KPI refs, sources)
+  - [ ] Labels (phase, domain, type, priority, gates as specified)
+  - [ ] Milestones (PHASE 0-4 as specified)
 - [ ] Projects v2 board created successfully
 - [ ] Custom fields created:
   - [ ] Phase (Single select with 5 options)
   - [ ] Domain (Single select with 10 options)
   - [ ] Priority (Single select with 4 options)
   - [ ] Notion Reference (Text field)
-- [ ] All issues added to project board
-- [ ] Script can be re-run without errors (idempotency test)
-- [ ] Verify project board at: `https://github.com/orgs/Abuzhor/projects` or user projects
+- [ ] All 40 issues added to project board
+- [ ] Project field values set for all 40 issues:
+  - [ ] Phase field populated
+  - [ ] Domain field populated (where applicable)
+  - [ ] Priority field populated
+  - [ ] Notion Reference field populated with source links
+- [ ] Script prints clear summary:
+  - [ ] Created count: 40
+  - [ ] Updated count: 0
+  - [ ] Skipped count: 0
+  - [ ] Project URL displayed
+- [ ] Verify all 40 issues at: `https://github.com/Abuzhor/smart-grocery-logistics-platform/issues`
+- [ ] Verify project board at: (check script output for URL)
+
+### Step 4: bootstrap_github.py Execution (Second Run - Idempotency Test)
+- [ ] Script runs without errors
+- [ ] Fetches existing issues (should find all 40)
+- [ ] Matches issues by exact title
+- [ ] Shows skipped count: 40 (no changes needed)
+- [ ] Created count: 0
+- [ ] Updated count: 0
+- [ ] No duplicate issues created
+- [ ] Project items not duplicated
+- [ ] Field values retained
+
+### Step 5: bootstrap_github.py Execution (Update Test)
+Manually edit one issue's body or labels in GitHub UI, then re-run:
+- [ ] Script detects the change
+- [ ] Updates the modified issue
+- [ ] Shows update count: 1
+- [ ] Created count: 0
+- [ ] Skipped count: 39
+- [ ] Labels are authoritatively synced (removes unintended labels)
+- [ ] Milestone updated if changed
+- [ ] Body restored to source of truth
 
 ## Manual Configuration (Post-Script)
 
@@ -78,53 +130,22 @@ After running the scripts, manually configure the following in the GitHub UI:
   - [ ] "By Priority" (sorted by Priority field)
 - [ ] Configure filters for each view as needed
 
-### Issue Field Population
-For each created issue, manually set (or via API):
-- [ ] Phase field (from phase label)
-- [ ] Domain field (from domain label)
-- [ ] Priority field (from priority label)
-- [ ] Notion Reference field (link to source doc)
-- [ ] Initial Status = "Backlog"
-
-## Issue Creation Completion
-
-⚠️ **IMPORTANT**: The bootstrap script creates **3 sample issues only** (#1-3), not all 40.
-
-### Current Status
-- ✅ Issues #1-3 created by script (meta issue + 2 examples)
-- ⚠️ Issues #4-40 documented in execution plan but NOT auto-created
-
-### Option 1: Extend bootstrap_github.sh
-- [ ] Add issue templates for remaining 37 issues (see execution plan)
-- [ ] Re-run script to create all issues
-
-### Option 2: Manual Creation (Recommended)
-- [ ] Create remaining 37 issues manually using execution plan as template
-- [ ] Ensure all issues include:
-  - [ ] Clear title matching execution plan
-  - [ ] Complete description with objectives, deliverables, acceptance criteria
-  - [ ] KPI references with links to Notion export
-  - [ ] Source documentation links
-  - [ ] Related issue cross-references
-  - [ ] Appropriate labels (phase, domain, type, priority, gates)
-  - [ ] Associated milestone
-
-### Option 3: Use GitHub API/CLI
-- [ ] Create script to batch-create issues from execution plan
-- [ ] Validate issue format and traceability
-- [ ] Run and verify
-
 ## Traceability Validation
 
-For a sample of created issues, verify:
-- [ ] Issue title matches execution plan
-- [ ] Issue description includes objectives
+For a sample of created issues (test issues #1, #12, #25, #31, #40), verify:
+- [ ] Issue title matches execution plan exactly
+- [ ] Issue description includes objectives section
 - [ ] Acceptance criteria are clear and testable
-- [ ] KPI references link to correct Notion export files and line numbers
-- [ ] Source documentation links are valid GitHub blob URLs
-- [ ] Related issues are cross-referenced by number
+- [ ] KPI references are present and well-formatted
+- [ ] Source documentation links are present
+- [ ] Related issues are cross-referenced (where applicable)
 - [ ] Labels are correctly applied
 - [ ] Milestone is correctly set
+- [ ] Project fields are populated:
+  - [ ] Phase field matches phase label
+  - [ ] Domain field matches domain label (where applicable)
+  - [ ] Priority field matches priority label
+  - [ ] Notion Reference field has source links
 
 ## Quality Checks
 
@@ -141,38 +162,57 @@ For a sample of created issues, verify:
 - [ ] No duplicate milestones
 
 ### Issue Quality
-Sample 5-10 issues and verify:
+Sample 10 issues across all phases and verify:
 - [ ] Title is descriptive and action-oriented
-- [ ] Description is comprehensive
+- [ ] Description is comprehensive with all sections
 - [ ] Acceptance criteria are specific and measurable
-- [ ] KPI references are accurate and link to source
-- [ ] Source documentation links work
-- [ ] Related issues are relevant
-- [ ] Labels are appropriate
+- [ ] KPI references are accurate
+- [ ] Source documentation references are present
+- [ ] Related issues are relevant (where applicable)
+- [ ] Labels are appropriate and complete
 - [ ] Milestone is correct
+- [ ] No hardcoded issue numbers in issue bodies
+
+### Project Board Quality
+- [ ] All 40 issues visible in project
+- [ ] Phase field distribution:
+  - [ ] PHASE 0: 10 issues
+  - [ ] PHASE 1: 10 issues
+  - [ ] PHASE 2: 9 issues
+  - [ ] PHASE 3: 5 issues
+  - [ ] PHASE 4: 6 issues
+- [ ] Domain field populated for all applicable issues
+- [ ] Priority field populated for all issues
+- [ ] Notion Reference field populated for all issues with source docs
 
 ## Rollback Plan
 
 If validation fails or errors occur:
 
-1. **Labels**: Can be safely deleted and recreated
+1. **issues.json**: Can be safely regenerated
+   ```bash
+   python3 scripts/planning/generate_issues_json.py
+   ```
+
+2. **Labels**: Can be safely deleted and recreated
    ```bash
    # Delete all labels (careful!)
    gh label list --repo Abuzhor/smart-grocery-logistics-platform --json name --jq '.[].name' | \
      xargs -I {} gh label delete {} --repo Abuzhor/smart-grocery-logistics-platform --yes
    ```
 
-2. **Milestones**: Can be deleted if no issues assigned
+3. **Milestones**: Can be deleted if no issues assigned
    ```bash
    # List and manually delete via web UI or API
    gh api repos/Abuzhor/smart-grocery-logistics-platform/milestones
    ```
 
-3. **Issues**: Can be closed/deleted (but keep for traceability)
-   - Prefer closing over deleting
+4. **Issues**: Can be closed in bulk
+   - Prefer closing over deleting for audit trail
    - Tag with "invalid" or "duplicate" label if needed
+   - Delete via GitHub UI if truly needed
 
-4. **Projects**: Can be deleted and recreated
+5. **Projects**: Can be deleted and recreated
    - Delete via web UI: Settings → Projects → Delete
 
 ## Success Criteria
@@ -180,21 +220,32 @@ If validation fails or errors occur:
 PHASE 0 bootstrap is successful when:
 - [x] Execution plan document exists and is comprehensive
 - [x] Scripts are created, tested, and documented
+- [x] `issues.json` generator created
 - [ ] All labels are created (31 total)
 - [ ] All milestones are created (5 total)
-- [ ] **3 sample issues created** (#1-3) with full traceability
-- [ ] **Remaining 37 issues** (#4-40) created manually or via script extension
+- [ ] **All 40 issues created** with full traceability
+  - [ ] PHASE 0: 10 issues
+  - [ ] PHASE 1: 10 issues
+  - [ ] PHASE 2: 9 issues
+  - [ ] PHASE 3: 5 issues
+  - [ ] PHASE 4: 6 issues
 - [ ] Projects v2 board is created and configured
-- [ ] All issues are added to project board
+- [ ] All 40 issues are added to project board
+- [ ] All project custom fields set for all 40 issues
 - [ ] Traceability is complete (all issues → Notion export)
-- [ ] Scripts are idempotent (verified by re-run)
+- [ ] Scripts are idempotent (verified by re-run):
+  - [ ] First run creates 40 issues
+  - [ ] Second run creates 0 duplicates
+  - [ ] Update run modifies only changed issues
 - [ ] Documentation is clear and usable
+- [ ] No hardcoded issue numbers anywhere
 
 ## Notes
 
-- Scripts are designed to be idempotent - safe to run multiple times
-- Existing labels/milestones/issues will be updated, not duplicated
-- Manual steps (board views, field population) should be documented
+- Scripts are designed to be fully idempotent - safe to run multiple times
+- Issues are matched by exact title for upsert logic
+- Labels are authoritatively synced (removes labels not in intended set)
+- Manual steps (board views) should be documented but are optional
 - Keep this checklist updated as validation progresses
 
 ## Sign-off

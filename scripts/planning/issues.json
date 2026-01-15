@@ -1,0 +1,673 @@
+[
+  {
+    "title": "PHASE 0 – Notion → GitHub Execution Plan",
+    "body": "## Description\n\nMaster tracking issue for PHASE 0 execution\n\n## Acceptance Criteria\n\n  - [x] Execution plan document created\n  - [ ] All labels created in repository\n  - [ ] All milestones created\n  - [ ] All mapped issues created with proper traceability\n  - [ ] Projects v2 board configured\n  - [ ] All issues added to project board\n\n## KPI References\n\n  - Setup completeness: 100% of artifacts created\n  - Traceability: All issues link to source documentation\n\n## Source\n\n`docs/notion-export/index.md`, `docs/notion-export/00-executive-summary.md`",
+    "labels": [
+      "phase:0-bootstrap",
+      "type:documentation",
+      "priority:critical"
+    ],
+    "milestone": "PHASE 0: Bootstrap & Planning",
+    "project": {
+      "phase": "PHASE 0",
+      "domain": null,
+      "priority": "Critical",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/index.md, https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/00-executive-summary.md"
+    }
+  },
+  {
+    "title": "Bootstrap GitHub Project Automation",
+    "body": "## Description\n\nCreate automation scripts for bootstrapping GitHub artifacts\n\n## Acceptance Criteria\n\n- [ ] `scripts/planning/bootstrap_github.sh` created and tested\n  - [ ] `scripts/planning/bootstrap_github.py` created and tested\n  - [ ] Scripts are idempotent (safe to re-run)\n  - [ ] Scripts print created artifacts with links\n  - [ ] Documentation for running scripts added\n\n## KPI References\n\nAutomation reliability: 100% success rate on re-runs\n\n## Source\n\nRequirements from problem statement\n\n## Related Issues\n\n#1",
+    "labels": [
+      "phase:0-bootstrap",
+      "type:infrastructure",
+      "priority:critical"
+    ],
+    "milestone": "PHASE 0: Bootstrap & Planning",
+    "project": {
+      "phase": "PHASE 0",
+      "domain": null,
+      "priority": "Critical",
+      "notion_reference": ""
+    }
+  },
+  {
+    "title": "Define Vision and North Star Metrics",
+    "body": "## Description\n\nDocument platform vision, goals, and north star metrics based on Notion export\n\n## Acceptance Criteria\n\n- [ ] Vision document created referencing Notion export\n  - [ ] North star metrics defined (On-time delivery ≥95%, Payment success ≥99%, Cancellation ≤5%, CSAT ≥60)\n  - [ ] Quarterly OKRs outlined\n  - [ ] Go/No-Go decision criteria documented\n\n## KPI References\n\n- [On-time delivery ≥95%](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md#L3)\n  - [Payment success ≥99%](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md#L4)\n  - [Cancellation ≤3-5%](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md#L5)\n  - [CSAT ≥60](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md#L6)\n\n## Source\n\n[`docs/notion-export/01-vision-and-goals.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/01-vision-and-goals.md), [`docs/notion-export/07-metrics-and-gates.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md)\n\n## Related Issues\n\n#1",
+    "labels": [
+      "phase:0-bootstrap",
+      "type:documentation",
+      "priority:high"
+    ],
+    "milestone": "PHASE 0: Bootstrap & Planning",
+    "project": {
+      "phase": "PHASE 0",
+      "domain": null,
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/01-vision-and-goals.md, https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md"
+    }
+  },
+  {
+    "title": "Define Platform Scope and Category Taxonomy",
+    "body": "## Description\n\nDefine platform scope, category classification, and operational packs\n\n## Acceptance Criteria\n\n- [ ] Category taxonomy documented (non-sensitive, cold-chain, regulated, scheduled services, B2B)\n  - [ ] Operational packs defined for each category type\n  - [ ] Category expansion roadmap created\n  - [ ] Requirements matrix for each category documented\n\n## KPI References\n\n- Category coverage: Start with 2, expand to 5-7\n  - Direct contribution margin: Positive per core category\n\n## Source\n\n[`docs/notion-export/03-platform-scope.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md)\n\n## Related Issues\n\n#1, #3",
+    "labels": [
+      "phase:0-bootstrap",
+      "type:documentation",
+      "priority:high",
+      "domain:platform"
+    ],
+    "milestone": "PHASE 0: Bootstrap & Planning",
+    "project": {
+      "phase": "PHASE 0",
+      "domain": "Platform",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md"
+    }
+  },
+  {
+    "title": "Document 90-Day City Launch Plan",
+    "body": "## Description\n\nCreate detailed 90-day city launch plan with week-by-week breakdown\n\n## Acceptance Criteria\n\n- [ ] Week 1-2: Operating zone definition, metrics setup, category policies\n  - [ ] Week 3-6: MVP (consumer/partner/workforce) + POD + settlements\n  - [ ] Week 7-10: Pilot operations + ETA/routing optimization + CAPA\n  - [ ] Week 11-13: Expand to 2 additional categories + payment/tax config\n  - [ ] Gate criteria defined for each phase\n\n## KPI References\n\n- Launch timeline adherence: ≥90%\n  - Pilot success rate: All 4 gates (reliability, economics, trust, compliance) passed\n\n## Source\n\n[`docs/notion-export/08-90-day-city-launch-plan.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/08-90-day-city-launch-plan.md)\n\n## Related Issues\n\n#1, #3",
+    "labels": [
+      "phase:0-bootstrap",
+      "type:documentation",
+      "priority:high"
+    ],
+    "milestone": "PHASE 0: Bootstrap & Planning",
+    "project": {
+      "phase": "PHASE 0",
+      "domain": null,
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/08-90-day-city-launch-plan.md"
+    }
+  },
+  {
+    "title": "Create Measurement Dictionary and KPI Definitions",
+    "body": "## Description\n\nDefine all KPIs, calculation methods, and data sources\n\n## Acceptance Criteria\n\n- [ ] KPI dictionary created with definitions\n  - [ ] Calculation methods documented for each metric\n  - [ ] Data sources identified\n  - [ ] Dashboard specifications outlined (daily ops, weekly unit economics, monthly partner health)\n\n## KPI References\n\n- [On-time delivery](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/13-measurement-dictionary.md#L3)\n  - [Payment success](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/13-measurement-dictionary.md#L4)\n  - [Cancellation rate](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/13-measurement-dictionary.md#L5)\n  - [CSAT](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/13-measurement-dictionary.md#L6)\n  - [Supply chain metrics](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/13-measurement-dictionary.md#L7)\n\n## Source\n\n[`docs/notion-export/13-measurement-dictionary.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/13-measurement-dictionary.md), [`docs/notion-export/07-metrics-and-gates.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md)\n\n## Related Issues\n\n#1, #3",
+    "labels": [
+      "phase:0-bootstrap",
+      "type:documentation",
+      "priority:high",
+      "domain:operations"
+    ],
+    "milestone": "PHASE 0: Bootstrap & Planning",
+    "project": {
+      "phase": "PHASE 0",
+      "domain": "Operations",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/13-measurement-dictionary.md, https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md"
+    }
+  },
+  {
+    "title": "Define Risk Management Framework and Controls",
+    "body": "## Description\n\nDocument top 10 risks and corresponding controls\n\n## Acceptance Criteria\n\n- [ ] Risk register created with top 10 risks\n  - [ ] Controls defined (KYC/KYB, POD, audit trail, CAPA, separation of duties)\n  - [ ] Risk thresholds established (fraud, disputes, payment, compliance)\n  - [ ] Incident response procedures outlined\n\n## KPI References\n\n- Fraud rate: Within acceptable threshold\n  - Dispute rate: Within acceptable threshold\n  - Compliance violations: 0 critical\n\n## Source\n\n[`docs/notion-export/06-risks-and-controls.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/06-risks-and-controls.md)\n\n## Related Issues\n\n#1",
+    "labels": [
+      "phase:0-bootstrap",
+      "type:documentation",
+      "priority:high",
+      "domain:compliance"
+    ],
+    "milestone": "PHASE 0: Bootstrap & Planning",
+    "project": {
+      "phase": "PHASE 0",
+      "domain": "Compliance",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/06-risks-and-controls.md"
+    }
+  },
+  {
+    "title": "Document Technology Principles and Architecture",
+    "body": "## Description\n\nDefine technology principles and high-level architecture\n\n## Acceptance Criteria\n\n- [ ] Architecture principles documented (domain-driven, event-driven, feature flags, multi-tenant ready)\n  - [ ] Reliability requirements defined (SLAs, observability, DR, gradual rollout)\n  - [ ] Security requirements documented (zero trust, encryption, data classification, audit)\n  - [ ] Tech stack decisions captured in ADRs\n\n## KPI References\n\n- System availability: SLA targets per domain\n  - MTTR: Mean time to resolution targets\n  - Incident rate: Acceptable thresholds\n\n## Source\n\n[`docs/notion-export/10-technology-principles.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/10-technology-principles.md)\n\n## Related Issues\n\n#1",
+    "labels": [
+      "phase:0-bootstrap",
+      "type:architecture",
+      "priority:high",
+      "domain:platform"
+    ],
+    "milestone": "PHASE 0: Bootstrap & Planning",
+    "project": {
+      "phase": "PHASE 0",
+      "domain": "Platform",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/10-technology-principles.md"
+    }
+  },
+  {
+    "title": "Define Operations Governance and SOPs",
+    "body": "## Description\n\nCreate standard operating procedures and governance framework\n\n## Acceptance Criteria\n\n- [ ] Mandatory SOPs defined (fulfillment/substitution/return/recall + incident management + CAPA)\n  - [ ] Partner governance documented (quality scores, audits, improvement plans)\n  - [ ] Workforce governance documented (quality incentives, cancellation/delay policies)\n  - [ ] Escalation procedures created\n\n## KPI References\n\n- Partner quality score: Minimum threshold\n  - Workforce quality: Performance targets\n  - Incident resolution: SLA compliance\n\n## Source\n\n[`docs/notion-export/11-operations-governance.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/11-operations-governance.md), [`docs/notion-export/09-operating-pack-template.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/09-operating-pack-template.md)\n\n## Related Issues\n\n#1",
+    "labels": [
+      "phase:0-bootstrap",
+      "type:documentation",
+      "priority:medium",
+      "domain:operations"
+    ],
+    "milestone": "PHASE 0: Bootstrap & Planning",
+    "project": {
+      "phase": "PHASE 0",
+      "domain": "Operations",
+      "priority": "Medium",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/11-operations-governance.md, https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/09-operating-pack-template.md"
+    }
+  },
+  {
+    "title": "Document Revenue Model and Unit Economics",
+    "body": "## Description\n\nDefine revenue streams and unit economics framework\n\n## Acceptance Criteria\n\n- [ ] Revenue model documented (commission + delivery fees + subscriptions + ads + B2B + compliance services)\n  - [ ] Unit economics formula defined: Profit/Order = Revenue - (last mile + service + losses/fraud + support)\n  - [ ] Pricing experiments framework created\n  - [ ] Decision thresholds documented (no expansion for categories with sustained direct losses)\n\n## KPI References\n\n- Direct contribution margin: Positive per category\n  - CAC vs LTV: Healthy ratio\n  - Margin per order: Target thresholds\n\n## Source\n\n[`docs/notion-export/05-revenue-model.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/05-revenue-model.md), [`docs/notion-export/12-economics.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/12-economics.md)\n\n## Related Issues\n\n#1, #3",
+    "labels": [
+      "phase:0-bootstrap",
+      "type:documentation",
+      "priority:high"
+    ],
+    "milestone": "PHASE 0: Bootstrap & Planning",
+    "project": {
+      "phase": "PHASE 0",
+      "domain": null,
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/05-revenue-model.md, https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/12-economics.md"
+    }
+  },
+  {
+    "title": "Setup Core Platform Infrastructure",
+    "body": "## Description\n\nSet up foundational infrastructure and development environment\n\n## Acceptance Criteria\n\n- [ ] CI/CD pipeline configured\n  - [ ] Development, staging, production environments set up\n  - [ ] Observability stack deployed (logs, metrics, traces)\n  - [ ] Security baseline implemented (encryption, secrets management, environment separation)\n  - [ ] Feature flag system operational\n\n## KPI References\n\n- Deployment success rate: ≥99%\n  - Environment uptime: ≥99.9%\n  - Security audit: 0 critical findings\n\n## Source\n\n[`docs/notion-export/10-technology-principles.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/10-technology-principles.md)\n\n## Related Issues\n\n#8",
+    "labels": [
+      "phase:1-foundation",
+      "type:infrastructure",
+      "priority:critical",
+      "domain:platform"
+    ],
+    "milestone": "PHASE 1: Foundation",
+    "project": {
+      "phase": "PHASE 1",
+      "domain": "Platform",
+      "priority": "Critical",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/10-technology-principles.md"
+    }
+  },
+  {
+    "title": "Implement Catalog Domain",
+    "body": "## Description\n\nBuild catalog management system for products and services\n\n## Acceptance Criteria\n\n- [ ] Product catalog schema designed\n  - [ ] Category management implemented\n  - [ ] Product attributes and metadata support\n  - [ ] Search and filtering capabilities\n  - [ ] Multi-language support foundation\n\n## KPI References\n\n- Catalog completeness: 100% for pilot categories\n  - Search relevance: User satisfaction metrics\n\n## Source\n\n[`docs/notion-export/03-platform-scope.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md)\n\n## Related Issues\n\n#4",
+    "labels": [
+      "phase:1-foundation",
+      "type:feature",
+      "priority:high",
+      "domain:catalog"
+    ],
+    "milestone": "PHASE 1: Foundation",
+    "project": {
+      "phase": "PHASE 1",
+      "domain": "Catalog",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md"
+    }
+  },
+  {
+    "title": "Implement Inventory Domain",
+    "body": "## Description\n\nBuild inventory tracking and availability system\n\n## Acceptance Criteria\n\n- [ ] Real-time inventory tracking\n  - [ ] Stock availability checks\n  - [ ] Reservation system for orders\n  - [ ] Inventory accuracy monitoring\n  - [ ] Partner inventory integration foundation\n\n## KPI References\n\n- [Inventory accuracy](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/13-measurement-dictionary.md#L7): Target ≥95%\n\n## Source\n\n[`docs/notion-export/03-platform-scope.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md)\n\n## Related Issues\n\n#4, #12",
+    "labels": [
+      "phase:1-foundation",
+      "type:feature",
+      "priority:high",
+      "domain:inventory"
+    ],
+    "milestone": "PHASE 1: Foundation",
+    "project": {
+      "phase": "PHASE 1",
+      "domain": "Inventory",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md"
+    }
+  },
+  {
+    "title": "Implement Ordering Domain",
+    "body": "## Description\n\nBuild order capture and orchestration system\n\n## Acceptance Criteria\n\n- [ ] Order creation and validation\n  - [ ] Shopping cart management\n  - [ ] Order state machine implemented\n  - [ ] Order event streaming\n  - [ ] Order history and tracking\n\n## KPI References\n\n- Order placement success rate: ≥99%\n  - Order processing time: Target SLA\n\n## Source\n\n[`docs/notion-export/04-product-interfaces.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md)\n\n## Related Issues\n\n#12, #13",
+    "labels": [
+      "phase:1-foundation",
+      "type:feature",
+      "priority:critical",
+      "domain:ordering"
+    ],
+    "milestone": "PHASE 1: Foundation",
+    "project": {
+      "phase": "PHASE 1",
+      "domain": "Ordering",
+      "priority": "Critical",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md"
+    }
+  },
+  {
+    "title": "Implement Fulfillment Domain",
+    "body": "## Description\n\nBuild fulfillment and picking system\n\n## Acceptance Criteria\n\n- [ ] Picking workflow implemented\n  - [ ] Substitution logic\n  - [ ] Order splitting and batching\n  - [ ] Quality checks integration\n  - [ ] Staging and handoff to delivery\n\n## KPI References\n\n- Fulfillment SLA: Target pick-to-ready time\n  - Substitution acceptance rate: Target %\n\n## Source\n\n[`docs/notion-export/04-product-interfaces.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md), [`docs/notion-export/09-operating-pack-template.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/09-operating-pack-template.md)\n\n## Related Issues\n\n#14",
+    "labels": [
+      "phase:1-foundation",
+      "type:feature",
+      "priority:critical",
+      "domain:fulfillment"
+    ],
+    "milestone": "PHASE 1: Foundation",
+    "project": {
+      "phase": "PHASE 1",
+      "domain": "Fulfillment",
+      "priority": "Critical",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md, https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/09-operating-pack-template.md"
+    }
+  },
+  {
+    "title": "Implement Routing and Delivery Domain",
+    "body": "## Description\n\nBuild route optimization and delivery tracking system\n\n## Acceptance Criteria\n\n- [ ] Zone management\n  - [ ] Route optimization algorithms\n  - [ ] ETA calculation\n  - [ ] Live tracking\n  - [ ] Proof of delivery (POD)\n\n## KPI References\n\n- [On-time delivery ≥95%](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md#L3)\n  - Delivery cost per order: Target threshold\n  - ETA accuracy: Target %\n\n## Source\n\n[`docs/notion-export/04-product-interfaces.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md), [`docs/notion-export/10-technology-principles.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/10-technology-principles.md)\n\n## Related Issues\n\n#15",
+    "labels": [
+      "phase:1-foundation",
+      "type:feature",
+      "priority:high",
+      "domain:routing"
+    ],
+    "milestone": "PHASE 1: Foundation",
+    "project": {
+      "phase": "PHASE 1",
+      "domain": "Routing",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md, https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/10-technology-principles.md"
+    }
+  },
+  {
+    "title": "Implement Partner Management Domain",
+    "body": "## Description\n\nBuild partner onboarding and management system\n\n## Acceptance Criteria\n\n- [ ] Partner onboarding workflow\n  - [ ] KYB (Know Your Business) verification\n  - [ ] Partner dashboard foundation\n  - [ ] Catalog and inventory integration\n  - [ ] Settlement foundation\n\n## KPI References\n\n- Partner onboarding time: Target days\n  - Partner quality score: Minimum threshold\n\n## Source\n\n[`docs/notion-export/04-product-interfaces.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md)\n\n## Related Issues\n\n#12, #13",
+    "labels": [
+      "phase:1-foundation",
+      "type:feature",
+      "priority:high",
+      "domain:partner"
+    ],
+    "milestone": "PHASE 1: Foundation",
+    "project": {
+      "phase": "PHASE 1",
+      "domain": "Partner",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md"
+    }
+  },
+  {
+    "title": "Implement Workforce Management Domain",
+    "body": "## Description\n\nBuild workforce and driver management system\n\n## Acceptance Criteria\n\n- [ ] Driver onboarding and verification\n  - [ ] Assignment logic\n  - [ ] Driver mobile app foundation\n  - [ ] Performance tracking\n  - [ ] Incentive calculation foundation\n\n## KPI References\n\n- Driver quality score: Target threshold\n  - Assignment efficiency: Target %\n\n## Source\n\n[`docs/notion-export/04-product-interfaces.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md), [`docs/notion-export/11-operations-governance.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/11-operations-governance.md)\n\n## Related Issues\n\n#16",
+    "labels": [
+      "phase:1-foundation",
+      "type:feature",
+      "priority:high",
+      "domain:workforce"
+    ],
+    "milestone": "PHASE 1: Foundation",
+    "project": {
+      "phase": "PHASE 1",
+      "domain": "Workforce",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md, https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/11-operations-governance.md"
+    }
+  },
+  {
+    "title": "Build Consumer Mobile App (MVP)",
+    "body": "## Description\n\nBuild consumer-facing mobile application for iOS and Android\n\n## Acceptance Criteria\n\n- [ ] Browse catalog\n  - [ ] Search and filter\n  - [ ] Shopping cart\n  - [ ] Checkout and payment\n  - [ ] Order tracking\n  - [ ] Support and disputes\n\n## KPI References\n\n- App rating: Target ≥4.0\n  - Conversion rate: Target %\n  - [CSAT ≥60](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md#L6)\n\n## Source\n\n[`docs/notion-export/04-product-interfaces.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md)\n\n## Related Issues\n\n#12, #14",
+    "labels": [
+      "phase:2-mvp",
+      "type:feature",
+      "priority:critical"
+    ],
+    "milestone": "PHASE 2: MVP Launch",
+    "project": {
+      "phase": "PHASE 2",
+      "domain": null,
+      "priority": "Critical",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md"
+    }
+  },
+  {
+    "title": "Build Partner Dashboard (MVP)",
+    "body": "## Description\n\nBuild partner dashboard for catalog, orders, and settlements\n\n## Acceptance Criteria\n\n- [ ] Catalog management UI\n  - [ ] Inventory management UI\n  - [ ] Order fulfillment workflow\n  - [ ] Settlement reports\n  - [ ] Performance metrics dashboard\n\n## KPI References\n\n- Partner adoption rate: Target %\n  - Time to first order: Target hours\n\n## Source\n\n[`docs/notion-export/04-product-interfaces.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md)\n\n## Related Issues\n\n#17",
+    "labels": [
+      "phase:2-mvp",
+      "type:feature",
+      "priority:high",
+      "domain:partner"
+    ],
+    "milestone": "PHASE 2: MVP Launch",
+    "project": {
+      "phase": "PHASE 2",
+      "domain": "Partner",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md"
+    }
+  },
+  {
+    "title": "Build Workforce Mobile App (MVP)",
+    "body": "## Description\n\nBuild driver/workforce mobile app for task management\n\n## Acceptance Criteria\n\n- [ ] Assignment notifications\n  - [ ] Route navigation integration\n  - [ ] POD capture (photo, signature)\n  - [ ] Status updates\n  - [ ] Earnings tracking\n\n## KPI References\n\n- Driver adoption rate: Target %\n  - POD capture rate: 100%\n\n## Source\n\n[`docs/notion-export/04-product-interfaces.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md)\n\n## Related Issues\n\n#18",
+    "labels": [
+      "phase:2-mvp",
+      "type:feature",
+      "priority:high",
+      "domain:workforce"
+    ],
+    "milestone": "PHASE 2: MVP Launch",
+    "project": {
+      "phase": "PHASE 2",
+      "domain": "Workforce",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md"
+    }
+  },
+  {
+    "title": "Implement Payment Integration",
+    "body": "## Description\n\nIntegrate payment gateway and implement payment flows\n\n## Acceptance Criteria\n\n- [ ] Payment gateway integration (credit/debit cards)\n  - [ ] Digital wallet support\n  - [ ] Cash on delivery option\n  - [ ] Refund handling\n  - [ ] Settlement automation for partners\n\n## KPI References\n\n- [Payment success ≥99%](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md#L4)\n  - Refund processing time: Target SLA\n\n## Source\n\n[`docs/notion-export/04-product-interfaces.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md)\n\n## Related Issues\n\n#14",
+    "labels": [
+      "phase:2-mvp",
+      "type:feature",
+      "priority:critical"
+    ],
+    "milestone": "PHASE 2: MVP Launch",
+    "project": {
+      "phase": "PHASE 2",
+      "domain": null,
+      "priority": "Critical",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md"
+    }
+  },
+  {
+    "title": "Implement Notification System",
+    "body": "## Description\n\nBuild multi-channel notification system\n\n## Acceptance Criteria\n\n- [ ] Email notifications\n  - [ ] SMS notifications\n  - [ ] Push notifications\n  - [ ] Notification preferences\n  - [ ] Template management\n\n## KPI References\n\n- Notification delivery rate: ≥99%\n  - Opt-out rate: Below threshold\n\n## Source\n\n[`docs/notion-export/04-product-interfaces.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md)\n\n## Related Issues\n\n#19",
+    "labels": [
+      "phase:2-mvp",
+      "type:feature",
+      "priority:medium"
+    ],
+    "milestone": "PHASE 2: MVP Launch",
+    "project": {
+      "phase": "PHASE 2",
+      "domain": null,
+      "priority": "Medium",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md"
+    }
+  },
+  {
+    "title": "Implement Dispute and Support System",
+    "body": "## Description\n\nBuild dispute handling and customer support system\n\n## Acceptance Criteria\n\n- [ ] Support ticket creation\n  - [ ] Dispute workflow with evidence\n  - [ ] Refund processing\n  - [ ] Support agent dashboard\n  - [ ] SLA tracking\n\n## KPI References\n\n- First response time: Target SLA\n  - Resolution time: Target SLA\n  - Dispute resolution rate: Target %\n\n## Source\n\n[`docs/notion-export/04-product-interfaces.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md)\n\n## Related Issues\n\n#19",
+    "labels": [
+      "phase:2-mvp",
+      "type:feature",
+      "priority:high"
+    ],
+    "milestone": "PHASE 2: MVP Launch",
+    "project": {
+      "phase": "PHASE 2",
+      "domain": null,
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/04-product-interfaces.md"
+    }
+  },
+  {
+    "title": "Launch Pilot in City 1 with 2 Categories",
+    "body": "## Description\n\nExecute pilot launch following 90-day plan\n\n## Acceptance Criteria\n\n- [ ] Operating zones defined\n  - [ ] 2 categories launched (grocery + one other)\n  - [ ] Partner network established (minimum 5 partners)\n  - [ ] Driver pool recruited (minimum 10 drivers)\n  - [ ] Week 7-10 pilot operations completed\n  - [ ] All 4 gates validated (reliability, economics, trust, compliance)\n\n## KPI References\n\n- [On-time delivery ≥95%](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md#L3)\n  - [Payment success ≥99%](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md#L4)\n  - [Cancellation ≤5%](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md#L5)\n  - [CSAT ≥60](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/07-metrics-and-gates.md#L6)\n  - Direct contribution margin: Positive\n\n## Source\n\n[`docs/notion-export/08-90-day-city-launch-plan.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/08-90-day-city-launch-plan.md)\n\n## Related Issues\n\n#5, #19, #20, #21",
+    "labels": [
+      "phase:2-mvp",
+      "type:feature",
+      "priority:critical",
+      "gate:reliability",
+      "gate:economics"
+    ],
+    "milestone": "PHASE 2: MVP Launch",
+    "project": {
+      "phase": "PHASE 2",
+      "domain": null,
+      "priority": "Critical",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/08-90-day-city-launch-plan.md"
+    }
+  },
+  {
+    "title": "Expand to 5-7 Categories in City 1",
+    "body": "## Description\n\nExpand category coverage following operational pack patterns\n\n## Acceptance Criteria\n\n- [ ] Cold-chain category pack implemented (sensors, time limits)\n  - [ ] Regulated category pack implemented (KYC, age verification, strong POD)\n  - [ ] Service category pack implemented (scheduling, service pricing)\n  - [ ] 5-7 categories operational\n  - [ ] Category-specific KPIs tracked\n\n## KPI References\n\n- Direct contribution margin per category: Positive\n  - Category adoption rate: Target %\n\n## Source\n\n[`docs/notion-export/03-platform-scope.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md)\n\n## Related Issues\n\n#4, #25",
+    "labels": [
+      "phase:3-scale",
+      "type:feature",
+      "priority:high",
+      "category:cold-chain",
+      "category:regulated"
+    ],
+    "milestone": "PHASE 3: Scale & Optimize",
+    "project": {
+      "phase": "PHASE 3",
+      "domain": null,
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md"
+    }
+  },
+  {
+    "title": "Implement Operational Analytics and Dashboards",
+    "body": "## Description\n\nBuild comprehensive analytics and monitoring dashboards\n\n## Acceptance Criteria\n\n- [ ] Daily operations dashboard\n  - [ ] Weekly unit economics dashboard\n  - [ ] Monthly partner health dashboard\n  - [ ] Real-time alerting system\n  - [ ] Executive reporting\n\n## KPI References\n\n- Dashboard uptime: ≥99.9%\n  - Data freshness: Real-time to daily as appropriate\n  - Alert accuracy: Low false positive rate\n\n## Source\n\n[`docs/notion-export/13-measurement-dictionary.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/13-measurement-dictionary.md)\n\n## Related Issues\n\n#6",
+    "labels": [
+      "phase:3-scale",
+      "type:feature",
+      "priority:high",
+      "domain:operations"
+    ],
+    "milestone": "PHASE 3: Scale & Optimize",
+    "project": {
+      "phase": "PHASE 3",
+      "domain": "Operations",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/13-measurement-dictionary.md"
+    }
+  },
+  {
+    "title": "Implement Fraud Detection System",
+    "body": "## Description\n\nBuild fraud detection and prevention system\n\n## Acceptance Criteria\n\n- [ ] Real-time fraud scoring\n  - [ ] Anomaly detection\n  - [ ] Manual review workflow\n  - [ ] Blocklist management\n  - [ ] Fraud reporting and analytics\n\n## KPI References\n\n- Fraud rate: Below threshold\n  - False positive rate: Below threshold\n\n## Source\n\n[`docs/notion-export/06-risks-and-controls.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/06-risks-and-controls.md)\n\n## Related Issues\n\n#7",
+    "labels": [
+      "phase:3-scale",
+      "type:security",
+      "priority:high",
+      "gate:trust"
+    ],
+    "milestone": "PHASE 3: Scale & Optimize",
+    "project": {
+      "phase": "PHASE 3",
+      "domain": null,
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/06-risks-and-controls.md"
+    }
+  },
+  {
+    "title": "Implement CAPA (Corrective and Preventive Actions) System",
+    "body": "## Description\n\nBuild CAPA tracking and management system\n\n## Acceptance Criteria\n\n- [ ] Incident logging\n  - [ ] Root cause analysis workflow\n  - [ ] Corrective action tracking\n  - [ ] Preventive measure implementation\n  - [ ] Effectiveness review\n\n## KPI References\n\n- CAPA closure rate: Target %\n  - Recurring incident rate: Decreasing trend\n\n## Source\n\n[`docs/notion-export/09-operating-pack-template.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/09-operating-pack-template.md), [`docs/notion-export/11-operations-governance.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/11-operations-governance.md)\n\n## Related Issues\n\n#9",
+    "labels": [
+      "phase:3-scale",
+      "type:feature",
+      "priority:medium",
+      "domain:operations"
+    ],
+    "milestone": "PHASE 3: Scale & Optimize",
+    "project": {
+      "phase": "PHASE 3",
+      "domain": "Operations",
+      "priority": "Medium",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/09-operating-pack-template.md, https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/11-operations-governance.md"
+    }
+  },
+  {
+    "title": "Launch City 2",
+    "body": "## Description\n\nExpand to second city in same country\n\n## Acceptance Criteria\n\n- [ ] City selection criteria applied\n  - [ ] Operating zones defined\n  - [ ] Partner network established\n  - [ ] Pilot execution (2 categories initially)\n  - [ ] All 4 gates validated\n  - [ ] Expansion to 5-7 categories\n\n## KPI References\n\n- Time to launch: Target days from decision\n  - Same KPIs as City 1 (on-time, payment success, cancellation, CSAT)\n\n## Source\n\n[`docs/notion-export/08-90-day-city-launch-plan.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/08-90-day-city-launch-plan.md), [`docs/notion-export/02-target-market.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/02-target-market.md)\n\n## Related Issues\n\n#25",
+    "labels": [
+      "phase:3-scale",
+      "type:feature",
+      "priority:high",
+      "gate:reliability",
+      "gate:economics"
+    ],
+    "milestone": "PHASE 3: Scale & Optimize",
+    "project": {
+      "phase": "PHASE 3",
+      "domain": null,
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/08-90-day-city-launch-plan.md, https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/02-target-market.md"
+    }
+  },
+  {
+    "title": "Implement Multi-Country Policy Engine",
+    "body": "## Description\n\nBuild configurable policy engine for multi-country compliance\n\n## Acceptance Criteria\n\n- [ ] Policy configuration framework\n  - [ ] Country-specific rule engine\n  - [ ] Category restrictions by country\n  - [ ] Age verification rules\n  - [ ] License and permit checking\n\n## KPI References\n\n- Policy compliance rate: 100%\n  - Configuration errors: 0\n\n## Source\n\n[`docs/notion-export/06-risks-and-controls.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/06-risks-and-controls.md)\n\n## Related Issues\n\n#7",
+    "labels": [
+      "phase:4-global",
+      "type:feature",
+      "priority:critical",
+      "domain:compliance"
+    ],
+    "milestone": "PHASE 4: Global Expansion",
+    "project": {
+      "phase": "PHASE 4",
+      "domain": "Compliance",
+      "priority": "Critical",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/06-risks-and-controls.md"
+    }
+  },
+  {
+    "title": "Implement Multi-Currency and Tax Engine",
+    "body": "## Description\n\nSupport multiple currencies and tax regimes\n\n## Acceptance Criteria\n\n- [ ] Multi-currency support\n  - [ ] Exchange rate management\n  - [ ] Country-specific tax calculation\n  - [ ] Invoicing per country regulations\n  - [ ] Financial reporting per country\n\n## KPI References\n\n- Tax calculation accuracy: 100%\n  - Invoice compliance: 100%\n\n## Source\n\n[`docs/notion-export/12-economics.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/12-economics.md)\n\n## Related Issues\n\n#10",
+    "labels": [
+      "phase:4-global",
+      "type:feature",
+      "priority:high"
+    ],
+    "milestone": "PHASE 4: Global Expansion",
+    "project": {
+      "phase": "PHASE 4",
+      "domain": null,
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/12-economics.md"
+    }
+  },
+  {
+    "title": "Implement Localization Framework",
+    "body": "## Description\n\nBuild comprehensive localization support\n\n## Acceptance Criteria\n\n- [ ] Multi-language UI support\n  - [ ] RTL (Right-to-Left) language support\n  - [ ] Locale-specific date/time/number formatting\n  - [ ] Translation management system\n  - [ ] Country-specific content\n\n## KPI References\n\n- Translation coverage: 100% for supported languages\n  - Localization defects: Below threshold\n\n## Source\n\n[`docs/notion-export/03-platform-scope.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md)\n\n## Related Issues\n\n#12",
+    "labels": [
+      "phase:4-global",
+      "type:feature",
+      "priority:high"
+    ],
+    "milestone": "PHASE 4: Global Expansion",
+    "project": {
+      "phase": "PHASE 4",
+      "domain": null,
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md"
+    }
+  },
+  {
+    "title": "Implement Data Governance and Privacy Framework",
+    "body": "## Description\n\nImplement comprehensive data governance for global operations\n\n## Acceptance Criteria\n\n- [ ] Data classification system\n  - [ ] Role-based access control (RBAC)\n  - [ ] Data retention policies per country\n  - [ ] User consent management\n  - [ ] Right to deletion (with regulatory exceptions)\n  - [ ] Audit trail for all data access\n\n## KPI References\n\n- Data breach incidents: 0\n  - Privacy compliance audit: Pass\n  - GDPR/local privacy law compliance: 100%\n\n## Source\n\n[`docs/notion-export/06-risks-and-controls.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/06-risks-and-controls.md)\n\n## Related Issues\n\n#7, #31",
+    "labels": [
+      "phase:4-global",
+      "type:compliance-task",
+      "priority:critical",
+      "domain:compliance"
+    ],
+    "milestone": "PHASE 4: Global Expansion",
+    "project": {
+      "phase": "PHASE 4",
+      "domain": "Compliance",
+      "priority": "Critical",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/06-risks-and-controls.md"
+    }
+  },
+  {
+    "title": "Launch Country 2",
+    "body": "## Description\n\nExpand to second country\n\n## Acceptance Criteria\n\n- [ ] Country selection criteria applied\n  - [ ] Policy engine configured for country\n  - [ ] Payment and tax integration completed\n  - [ ] Localization completed\n  - [ ] Compliance documentation ready\n  - [ ] City 1 in country 2 launched\n  - [ ] All 4 gates validated\n\n## KPI References\n\n- Time to country launch: Target months\n  - Compliance violations: 0 critical\n  - Same operational KPIs as previous launches\n\n## Source\n\n[`docs/notion-export/08-90-day-city-launch-plan.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/08-90-day-city-launch-plan.md)\n\n## Related Issues\n\n#31, #32, #33, #34",
+    "labels": [
+      "phase:4-global",
+      "type:feature",
+      "priority:critical",
+      "gate:compliance"
+    ],
+    "milestone": "PHASE 4: Global Expansion",
+    "project": {
+      "phase": "PHASE 4",
+      "domain": null,
+      "priority": "Critical",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/08-90-day-city-launch-plan.md"
+    }
+  },
+  {
+    "title": "Implement B2B Module",
+    "body": "## Description\n\nBuild B2B ordering and fulfillment capabilities\n\n## Acceptance Criteria\n\n- [ ] Corporate account management\n  - [ ] Recurring order contracts\n  - [ ] SLA agreements\n  - [ ] Invoicing and payment terms\n  - [ ] B2B analytics dashboard\n\n## KPI References\n\n- B2B customer acquisition: Target count\n  - Contract renewal rate: Target %\n  - B2B order volume: Target growth\n\n## Source\n\n[`docs/notion-export/03-platform-scope.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md)\n\n## Related Issues\n\n#4",
+    "labels": [
+      "phase:4-global",
+      "type:feature",
+      "priority:medium",
+      "category:b2b"
+    ],
+    "milestone": "PHASE 4: Global Expansion",
+    "project": {
+      "phase": "PHASE 4",
+      "domain": null,
+      "priority": "Medium",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/03-platform-scope.md"
+    }
+  },
+  {
+    "title": "Document All ADRs (Architecture Decision Records)",
+    "body": "## Description\n\nCreate ADRs for all major architectural decisions\n\n## Acceptance Criteria\n\n- [ ] ADR template created\n  - [ ] ADRs for: domain boundaries, event system, data storage, API design, security model\n  - [ ] ADR review process established\n  - [ ] ADRs published and accessible to team\n\n## KPI References\n\n- ADR coverage: All major decisions documented\n\n## Source\n\n[`docs/notion-export/10-technology-principles.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/10-technology-principles.md)\n\n## Related Issues\n\n#8",
+    "labels": [
+      "phase:1-foundation",
+      "type:architecture",
+      "priority:medium",
+      "domain:platform"
+    ],
+    "milestone": "PHASE 1: Foundation",
+    "project": {
+      "phase": "PHASE 1",
+      "domain": "Platform",
+      "priority": "Medium",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/10-technology-principles.md"
+    }
+  },
+  {
+    "title": "Setup Continuous Integration and Testing",
+    "body": "## Description\n\nEstablish CI/CD pipeline and testing practices\n\n## Acceptance Criteria\n\n- [ ] CI pipeline for automated testing\n  - [ ] Code coverage tracking\n  - [ ] Automated security scanning\n  - [ ] Performance testing framework\n  - [ ] Release train process\n\n## KPI References\n\n- Test coverage: Target % per domain\n  - CI success rate: ≥95%\n  - Deployment frequency: Target per week\n\n## Source\n\n[`docs/notion-export/10-technology-principles.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/10-technology-principles.md)\n\n## Related Issues\n\n#11",
+    "labels": [
+      "phase:1-foundation",
+      "type:infrastructure",
+      "priority:high",
+      "domain:platform"
+    ],
+    "milestone": "PHASE 1: Foundation",
+    "project": {
+      "phase": "PHASE 1",
+      "domain": "Platform",
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/10-technology-principles.md"
+    }
+  },
+  {
+    "title": "Implement Improvement Loop Process",
+    "body": "## Description\n\nEstablish continuous improvement process\n\n## Acceptance Criteria\n\n- [ ] Experiment log template\n  - [ ] Decision template\n  - [ ] Change log\n  - [ ] Weekly cycle: hypothesis → experiment → result → decision\n  - [ ] Rollback plan for all changes\n\n## KPI References\n\n- Experiment success rate: Target %\n  - Time from hypothesis to decision: Target days\n\n## Source\n\n[`docs/notion-export/15-improvement-loop.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/15-improvement-loop.md)\n\n## Related Issues\n\n#9",
+    "labels": [
+      "phase:2-mvp",
+      "type:documentation",
+      "priority:medium",
+      "domain:operations"
+    ],
+    "milestone": "PHASE 2: MVP Launch",
+    "project": {
+      "phase": "PHASE 2",
+      "domain": "Operations",
+      "priority": "Medium",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/15-improvement-loop.md"
+    }
+  },
+  {
+    "title": "Close Critical Gaps from Gap Analysis",
+    "body": "## Description\n\nAddress critical gaps identified in Notion export\n\n## Acceptance Criteria\n\n- [ ] Gap matrix created\n  - [ ] Owners assigned\n  - [ ] Target dates set\n  - [ ] Gaps closed with measurable KPI impact\n\n## KPI References\n\n- Gap closure rate: 100% of critical gaps\n  - Time to close: Target days\n\n## Source\n\n[`docs/notion-export/16-gaps-and-closures.md`](https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/16-gaps-and-closures.md)\n\n## Related Issues\n\n#3, #5",
+    "labels": [
+      "phase:2-mvp",
+      "type:feature",
+      "priority:high"
+    ],
+    "milestone": "PHASE 2: MVP Launch",
+    "project": {
+      "phase": "PHASE 2",
+      "domain": null,
+      "priority": "High",
+      "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/16-gaps-and-closures.md"
+    }
+  }
+]
