@@ -61,24 +61,40 @@ create_label() {
     fi
 }
 
-# Helper function to create milestone
+# Helper function to create or update milestone
 create_milestone() {
     local title="$1"
     local due_date="$2"
     local description="$3"
     
-    # Check if milestone exists
-    if gh api "repos/${REPO}/milestones" --jq ".[] | select(.title == \"${title}\") | .number" 2>/dev/null | grep -q .; then
-        echo -e "${YELLOW}  ↻ Milestone exists: ${title}${NC}"
-    else
-        local due_arg=""
+    # Check if milestone exists and get its number
+    local milestone_number=$(gh api "repos/${REPO}/milestones?state=all" --jq ".[] | select(.title == \"${title}\") | .number" 2>/dev/null)
+    
+    if [ -n "$milestone_number" ]; then
+        # Update existing milestone
         if [ -n "$due_date" ]; then
-            due_arg="--due-date $due_date"
+            gh api "repos/${REPO}/milestones/${milestone_number}" -X PATCH \
+                -f title="$title" \
+                -f description="$description" \
+                -f due_on="${due_date}T23:59:59Z" > /dev/null
+        else
+            gh api "repos/${REPO}/milestones/${milestone_number}" -X PATCH \
+                -f title="$title" \
+                -f description="$description" > /dev/null
         fi
-        gh api "repos/${REPO}/milestones" -X POST \
-            -f title="$title" \
-            -f description="$description" \
-            $due_arg > /dev/null
+        echo -e "${YELLOW}  ↻ Updated milestone: ${title}${NC}"
+    else
+        # Create new milestone
+        if [ -n "$due_date" ]; then
+            gh api "repos/${REPO}/milestones" -X POST \
+                -f title="$title" \
+                -f description="$description" \
+                -f due_on="${due_date}T23:59:59Z" > /dev/null
+        else
+            gh api "repos/${REPO}/milestones" -X POST \
+                -f title="$title" \
+                -f description="$description" > /dev/null
+        fi
         echo -e "${GREEN}  ✓ Created milestone: ${title}${NC}"
     fi
 }
@@ -155,22 +171,41 @@ echo -e "${BLUE}Step 2: Creating Milestones${NC}"
 echo -e "${BLUE}================================================${NC}"
 echo ""
 
-# Calculate due dates (relative to today)
-TODAY=$(date -u +%Y-%m-%d)
-DATE_30=$(date -u -d "+30 days" +%Y-%m-%d 2>/dev/null || date -u -v +30d +%Y-%m-%d)
-DATE_90=$(date -u -d "+90 days" +%Y-%m-%d 2>/dev/null || date -u -v +90d +%Y-%m-%d)
-DATE_180=$(date -u -d "+180 days" +%Y-%m-%d 2>/dev/null || date -u -v +180d +%Y-%m-%d)
-DATE_270=$(date -u -d "+270 days" +%Y-%m-%d 2>/dev/null || date -u -v +270d +%Y-%m-%d)
-DATE_365=$(date -u -d "+365 days" +%Y-%m-%d 2>/dev/null || date -u -v +365d +%Y-%m-%d)
+# Read milestones from config.json and create them
+CONFIG_FILE="$(dirname "$0")/config.json"
 
-create_milestone "PHASE 0: Bootstrap & Planning" "$DATE_30" "Project setup, planning artifacts, GitHub automation, initial documentation structure"
-create_milestone "PHASE 1: Foundation" "$DATE_90" "Core platform architecture, basic catalog, ordering, and fulfillment modules"
-create_milestone "PHASE 2: MVP Launch" "$DATE_180" "Single-city pilot with 2 categories, end-to-end workflows, payment integration"
-create_milestone "PHASE 3: Scale & Optimize" "$DATE_270" "Expand to 5-7 categories in city 1, second city launch, operational excellence"
-create_milestone "PHASE 4: Global Expansion" "$DATE_365" "Multi-country expansion, policy engine, compliance framework, localization"
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo -e "${RED}Error: config.json not found at ${CONFIG_FILE}${NC}"
+    exit 1
+fi
+
+# Extract and create milestones using jq
+milestone_count=0
+while IFS= read -r milestone; do
+    title=$(echo "$milestone" | jq -r '.title')
+    due_days=$(echo "$milestone" | jq -r '.due_days')
+    description=$(echo "$milestone" | jq -r '.description')
+    
+    # Calculate due date
+    if command -v date &> /dev/null; then
+        if date --version &> /dev/null 2>&1; then
+            # GNU date (Linux)
+            due_date=$(date -u -d "+${due_days} days" +%Y-%m-%d)
+        else
+            # BSD date (macOS)
+            due_date=$(date -u -v +${due_days}d +%Y-%m-%d)
+        fi
+    else
+        echo -e "${YELLOW}Warning: date command not available, skipping due date${NC}"
+        due_date=""
+    fi
+    
+    create_milestone "$title" "$due_date" "$description"
+    milestone_count=$((milestone_count + 1))
+done < <(jq -c '.milestones[]' "$CONFIG_FILE")
 
 echo ""
-echo -e "${GREEN}✓ All milestones created${NC}"
+echo -e "${GREEN}✓ All milestones created/updated (${milestone_count} total)${NC}"
 echo ""
 
 echo -e "${BLUE}================================================${NC}"
@@ -178,7 +213,7 @@ echo -e "${BLUE}Summary${NC}"
 echo -e "${BLUE}================================================${NC}"
 echo ""
 echo -e "${GREEN}Labels:${NC} 31 labels created/updated across 6 categories"
-echo -e "${GREEN}Milestones:${NC} 5 milestones created (PHASE 0-4)"
+echo -e "${GREEN}Milestones:${NC} ${milestone_count} milestones created/updated with due dates"
 echo ""
 echo -e "${BLUE}Next Steps:${NC}"
 echo "1. Generate issues.json: python3 scripts/planning/generate_issues_json.py"

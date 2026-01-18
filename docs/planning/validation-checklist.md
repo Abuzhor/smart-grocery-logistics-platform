@@ -54,22 +54,26 @@ This document tracks the validation and testing status of the PHASE 0 bootstrap 
 ### Step 2: bootstrap_github.sh Execution
 - [ ] Script runs without syntax errors
 - [ ] All 31 labels created successfully
-- [ ] All 5 milestones created successfully
-- [ ] Script prints summary with GitHub URLs
-- [ ] Script can be re-run without errors (idempotency test)
+- [ ] All 5 milestones created/updated successfully
+- [ ] Milestones have correct due_on dates (calculated from config.json due_days)
+- [ ] Script is idempotent (can be re-run without errors)
+- [ ] Script prints summary with label and milestone counts
 - [ ] Verify labels at: `https://github.com/Abuzhor/smart-grocery-logistics-platform/labels`
 - [ ] Verify milestones at: `https://github.com/Abuzhor/smart-grocery-logistics-platform/milestones`
+- [ ] Verify milestone due dates are set correctly (not empty)
 
 ### Step 3: bootstrap_github.py Execution (First Run)
 - [ ] Script runs without syntax errors
 - [ ] Successfully loads `issues.json` (40 issues)
 - [ ] Fetches existing milestones and creates milestone mapping
+- [ ] Auto-detects owner type (User or Organization)
+- [ ] Prints detected owner type correctly
 - [ ] Creates all 40 issues with correct:
   - [ ] Titles (matching execution plan exactly)
   - [ ] Bodies (full markdown with objectives, acceptance criteria, KPI refs, sources)
   - [ ] Labels (phase, domain, type, priority, gates as specified)
   - [ ] Milestones (PHASE 0-4 as specified)
-- [ ] Projects v2 board created successfully
+- [ ] Projects v2 board created successfully (or reuses existing)
 - [ ] Custom fields created:
   - [ ] Phase (Single select with 5 options)
   - [ ] Domain (Single select with 10 options)
@@ -82,10 +86,13 @@ This document tracks the validation and testing status of the PHASE 0 bootstrap 
   - [ ] Priority field populated
   - [ ] Notion Reference field populated with source links
 - [ ] Script prints clear summary:
+  - [ ] Repository and owner type displayed
   - [ ] Created count: 40
   - [ ] Updated count: 0
   - [ ] Skipped count: 0
   - [ ] Project URL displayed
+  - [ ] Added to project count displayed
+  - [ ] Field values updated count displayed
 - [ ] Verify all 40 issues at: `https://github.com/Abuzhor/smart-grocery-logistics-platform/issues`
 - [ ] Verify project board at: (check script output for URL)
 
