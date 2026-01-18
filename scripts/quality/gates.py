@@ -553,6 +553,41 @@ def _write_report(results: List[GateResult]) -> None:
     REPORT_PATH.write_text("\n".join(lines), encoding="utf-8")
 
 
+def _print_gate_table(results: Sequence[GateResult]) -> None:
+    print("\nGate Results Summary")
+    print("NAME | STATUS | SHORT REASON")
+    print("--- | --- | ---")
+    for result in results:
+        reason = result.message or "(no message)"
+        print(f"{result.name} | {result.status} | {reason}")
+
+
+def _print_failed_gates(results: Sequence[GateResult]) -> None:
+    failing = [result for result in results if result.status == "FAIL"]
+    if not failing:
+        return
+
+    print("\nFAILED GATES")
+    for result in failing:
+        reason = result.message
+        if result.failures:
+            reason = f"{reason} ({result.failures[0].message})"
+        print(f"- {result.name}: {reason}")
+
+
+def _print_report_content() -> None:
+    print("\nREPORT CONTENT (latest-quality-gates-report.md):")
+    try:
+        report_text = REPORT_PATH.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        print("(report missing)")
+        return
+    except Exception as exc:
+        print(f"(report unreadable: {exc})")
+        return
+    print(report_text)
+
+
 def main() -> int:
     results: List[GateResult] = []
     for gate in _collect_gates():
@@ -585,6 +620,11 @@ def main() -> int:
         f"WARN={summary['WARN']} SKIP={summary['SKIP']} | "
         f"Report: {REPORT_PATH.as_posix()}"
     )
+
+    _print_gate_table(results)
+    if summary["FAIL"] > 0:
+        _print_failed_gates(results)
+        _print_report_content()
 
     return 1 if summary["FAIL"] > 0 else 0
 
