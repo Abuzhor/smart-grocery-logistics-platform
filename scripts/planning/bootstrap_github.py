@@ -99,15 +99,22 @@ class GitHubGraphQLClient:
         
         if response.status_code != 200:
             print_color(Colors.RED, f"GraphQL request failed: {response.status_code}")
-            print_color(Colors.RED, "Check your GH_TOKEN and permissions. Ensure token has 'project' scope.")
-            sys.exit(1)
+            print_color(Colors.RED, response.text)
+            raise Exception(f"GraphQL HTTP error: {response.status_code}")
         
         result = response.json()
         
         if "errors" in result:
-            print_color(Colors.RED, "GraphQL errors:")
-            print_color(Colors.RED, json.dumps(result["errors"], indent=2))
-            sys.exit(1)
+            # For certain queries (like checking if org/user exists), we want to handle gracefully
+            error_messages = [e.get("message", "") for e in result["errors"]]
+            if any("Could not resolve" in msg for msg in error_messages):
+                # This is expected when checking if org/user exists
+                raise Exception(f"GraphQL resolution error: {error_messages[0]}")
+            else:
+                # Other errors should be printed and exit
+                print_color(Colors.RED, "GraphQL errors:")
+                print_color(Colors.RED, json.dumps(result["errors"], indent=2))
+                raise Exception("GraphQL query failed")
         
         return result.get("data", {})
 
@@ -218,8 +225,8 @@ def get_repository_id(client: GitHubGraphQLClient, owner: str, name: str) -> str
     result = client.query(query, {"owner": owner, "name": name})
     return result["repository"]["id"]
 
-def get_organization_id(client: GitHubGraphQLClient, login: str) -> str:
-    """Get organization node ID"""
+def get_organization_id(client: GitHubGraphQLClient, login: str) -> Optional[str]:
+    """Get organization node ID, returns None if not found"""
     query = """
     query($login: String!) {
       organization(login: $login) {
@@ -228,11 +235,14 @@ def get_organization_id(client: GitHubGraphQLClient, login: str) -> str:
     }
     """
     
-    result = client.query(query, {"login": login})
-    return result["organization"]["id"]
+    try:
+        result = client.query(query, {"login": login})
+        return result.get("organization", {}).get("id")
+    except:
+        return None
 
-def get_user_id(client: GitHubGraphQLClient, login: str) -> str:
-    """Get user node ID"""
+def get_user_id(client: GitHubGraphQLClient, login: str) -> Optional[str]:
+    """Get user node ID, returns None if not found"""
     query = """
     query($login: String!) {
       user(login: $login) {
@@ -241,14 +251,38 @@ def get_user_id(client: GitHubGraphQLClient, login: str) -> str:
     }
     """
     
-    result = client.query(query, {"login": login})
-    return result["user"]["id"]
+    try:
+        result = client.query(query, {"login": login})
+        return result.get("user", {}).get("id")
+    except:
+        return None
+
+def get_owner_id(client: GitHubGraphQLClient, login: str) -> tuple[str, str]:
+    """
+    Get owner ID and type (organization or user).
+    Tries organization first, then falls back to user.
+    Returns: (owner_id, owner_type) where owner_type is 'organization' or 'user'
+    Raises: SystemExit if neither is found
+    """
+    # Try organization first
+    owner_id = get_organization_id(client, login)
+    if owner_id:
+        return (owner_id, 'organization')
+    
+    # Fall back to user
+    owner_id = get_user_id(client, login)
+    if owner_id:
+        return (owner_id, 'user')
+    
+    # Neither found
+    print_color(Colors.RED, f"Error: Could not find organization or user with login '{login}'")
+    sys.exit(1)
 
 def find_existing_project(client: GitHubGraphQLClient, owner: str, title: str) -> Optional[Dict]:
-    """Find existing project by title"""
-    # Try organization first
-    try:
-        owner_id = get_organization_id(client, owner)
+    """Find existing project by title for user or organization"""
+    owner_id, owner_type = get_owner_id(client, owner)
+    
+    if owner_type == 'organization':
         query = """
         query($ownerId: ID!, $first: Int!) {
           node(id: $ownerId) {
@@ -265,32 +299,26 @@ def find_existing_project(client: GitHubGraphQLClient, owner: str, title: str) -
           }
         }
         """
-        result = client.query(query, {"ownerId": owner_id, "first": 100})
-        projects = result.get("node", {}).get("projectsV2", {}).get("nodes", [])
-    except:
-        # Try user if organization fails
-        try:
-            owner_id = get_user_id(client, owner)
-            query = """
-            query($ownerId: ID!, $first: Int!) {
-              node(id: $ownerId) {
-                ... on User {
-                  projectsV2(first: $first) {
-                    nodes {
-                      id
-                      number
-                      title
-                      url
-                    }
-                  }
+    else:  # user
+        query = """
+        query($ownerId: ID!, $first: Int!) {
+          node(id: $ownerId) {
+            ... on User {
+              projectsV2(first: $first) {
+                nodes {
+                  id
+                  number
+                  title
+                  url
                 }
               }
             }
-            """
-            result = client.query(query, {"ownerId": owner_id, "first": 100})
-            projects = result.get("node", {}).get("projectsV2", {}).get("nodes", [])
-        except:
-            return None
+          }
+        }
+        """
+    
+    result = client.query(query, {"ownerId": owner_id, "first": 100})
+    projects = result.get("node", {}).get("projectsV2", {}).get("nodes", [])
     
     for project in projects:
         if project["title"] == title:
@@ -299,20 +327,14 @@ def find_existing_project(client: GitHubGraphQLClient, owner: str, title: str) -
     return None
 
 def create_project(client: GitHubGraphQLClient, owner: str, title: str, description: str) -> Dict:
-    """Create a new GitHub Project v2"""
-    # Try to get owner ID (organization or user)
-    try:
-        owner_id = get_organization_id(client, owner)
-    except:
-        try:
-            owner_id = get_user_id(client, owner)
-        except:
-            print_color(Colors.RED, f"Error: Could not find organization or user: {owner}")
-            sys.exit(1)
+    """Create a new GitHub Project v2 for user or organization"""
+    owner_id, owner_type = get_owner_id(client, owner)
     
+    # Note: createProjectV2 does not accept 'body' parameter
+    # The description can be set later if needed via updateProjectV2
     mutation = """
-    mutation($ownerId: ID!, $title: String!, $body: String!) {
-      createProjectV2(input: {ownerId: $ownerId, title: $title, body: $body}) {
+    mutation($ownerId: ID!, $title: String!) {
+      createProjectV2(input: {ownerId: $ownerId, title: $title}) {
         projectV2 {
           id
           number
@@ -325,11 +347,13 @@ def create_project(client: GitHubGraphQLClient, owner: str, title: str, descript
     
     result = client.query(mutation, {
         "ownerId": owner_id,
-        "title": title,
-        "body": description
+        "title": title
     })
     
-    return result["createProjectV2"]["projectV2"]
+    project = result["createProjectV2"]["projectV2"]
+    print_color(Colors.GREEN, f"  ✓ Created project for {owner_type}: {owner}")
+    
+    return project
 
 def get_project_fields(client: GitHubGraphQLClient, project_id: str) -> List[Dict]:
     """Get existing fields for a project"""
@@ -674,6 +698,12 @@ def main():
     # Create or find project
     print_header("Setting up Projects v2 Board")
     
+    # Detect owner type
+    print(f"Detecting owner type for '{REPO_OWNER}'...")
+    owner_id, owner_type = get_owner_id(graphql_client, REPO_OWNER)
+    print_color(Colors.GREEN, f"✓ Owner '{REPO_OWNER}' is a {owner_type}")
+    print()
+    
     print("Checking for existing project...")
     existing_project = find_existing_project(graphql_client, REPO_OWNER, PROJECT_TITLE)
     
@@ -822,14 +852,26 @@ def main():
     
     # Summary
     print_header("Summary")
+    print_color(Colors.BLUE, f"Repository: {REPO_OWNER}/{REPO_NAME}")
+    print_color(Colors.BLUE, f"Owner Type: {owner_type}")
     print_color(Colors.BLUE, f"Project: {project['title']}")
-    print_color(Colors.BLUE, f"URL: {project_url}")
+    print_color(Colors.BLUE, f"Project URL: {project_url}")
+    print()
+    print_color(Colors.GREEN, f"Issues:")
+    print(f"  Created: {len(created_issues)}")
+    print(f"  Updated: {len(updated_issues)}")
+    print(f"  Skipped (no changes): {len(skipped_issues)}")
+    print(f"  Total in repo: {len(created_issues) + len(updated_issues) + len(skipped_issues)}")
+    print()
+    print_color(Colors.GREEN, f"Project Board:")
+    print(f"  Added to project: {added_count}")
+    print(f"  Field values updated: {field_update_count}")
     print()
     
     if created_issues:
         print_color(Colors.GREEN, f"Created {len(created_issues)} issues:")
         for num, title in created_issues[:10]:  # Show first 10
-            print(f"  #{num}: {title}")
+            print(f"  #{num}: {title[:70]}")
         if len(created_issues) > 10:
             print(f"  ... and {len(created_issues) - 10} more")
         print()
@@ -837,7 +879,7 @@ def main():
     if updated_issues:
         print_color(Colors.YELLOW, f"Updated {len(updated_issues)} issues:")
         for num, title in updated_issues[:10]:
-            print(f"  #{num}: {title}")
+            print(f"  #{num}: {title[:70]}")
         if len(updated_issues) > 10:
             print(f"  ... and {len(updated_issues) - 10} more")
         print()
@@ -854,6 +896,7 @@ def main():
     print()
     print_color(Colors.BLUE, "Next Steps:")
     print("1. Visit the project board to view all issues")
+    print(f"   {project_url}")
     print("2. Configure status column workflows if needed")
     print("3. Start working on issues!")
     print()

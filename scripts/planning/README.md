@@ -44,7 +44,8 @@ export GITHUB_REPOSITORY=Abuzhor/smart-grocery-logistics-platform
 **Features:**
 - ✓ Idempotent - safe to re-run multiple times
 - ✓ Creates 31 labels across 6 categories
-- ✓ Creates 5 milestones (PHASE 0-4)
+- ✓ Creates/updates 5 milestones with correct due dates (from config.json)
+- ✓ Milestone due dates calculated as UTC date + due_days from today
 - ✓ Prints summary with GitHub URLs
 
 **What it creates:**
@@ -57,12 +58,12 @@ export GITHUB_REPOSITORY=Abuzhor/smart-grocery-logistics-platform
    - Category labels: `category:grocery`, `category:cold-chain`, etc.
    - Gate labels: `gate:reliability`, `gate:economics`, etc.
 
-2. **Milestones** (5 phases):
-   - PHASE 0: Bootstrap & Planning (+30 days)
-   - PHASE 1: Foundation (+90 days)
-   - PHASE 2: MVP Launch (+180 days)
-   - PHASE 3: Scale & Optimize (+270 days)
-   - PHASE 4: Global Expansion (+365 days)
+2. **Milestones** (5 phases, loaded from config.json):
+   - PHASE 0: Bootstrap & Planning (due_on = today + 30 days)
+   - PHASE 1: Foundation (due_on = today + 90 days)
+   - PHASE 2: MVP Launch (due_on = today + 180 days)
+   - PHASE 3: Scale & Optimize (due_on = today + 270 days)
+   - PHASE 4: Global Expansion (due_on = today + 365 days)
 
 ### bootstrap_github.py
 
@@ -89,6 +90,7 @@ python3 scripts/planning/bootstrap_github.py
 - ✓ **Idempotent issue upsert**: Creates new issues or updates existing ones (matches by exact title)
 - ✓ Creates/updates all 40 issues from `issues.json`
 - ✓ Authoritative label sync (removes labels not in the intended set)
+- ✓ **Supports both User and Organization owners** (auto-detects)
 - ✓ Creates Projects v2 board with custom fields
 - ✓ Adds all 40 issues to the project
 - ✓ Sets Phase, Domain, Priority, and Notion Reference fields for each issue
@@ -192,8 +194,9 @@ If Projects v2 creation fails:
 - Ensure you have the correct permissions (owner or admin)
 - Check that the repository exists
 - Verify the `GH_TOKEN` has `project` scope
-- For personal repos, the token must have `project`, `repo` scopes
+- For personal repos (user), the token must have `project`, `repo` scopes
 - For org repos, the token must have `project`, `repo`, `read:org` scopes
+- The script now auto-detects whether the owner is a User or Organization
 
 ### Rate Limiting
 
