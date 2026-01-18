@@ -1,0 +1,52 @@
+name: quality-gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality-gates:
+    name: Quality Gates (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run quality gates (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: python3 scripts/quality/gates.py
+
+      - name: Run quality gates (Windows)
+        if: matrix.os == 'windows-latest'
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/quality/run_gates.ps1
+
+      - name: Print quality gates report (Linux)
+        if: always() && matrix.os == 'ubuntu-latest'
+        run: cat docs/audits/latest-quality-gates-report.md || true
+
+      - name: Print quality gates report (Windows)
+        if: always() && matrix.os == 'windows-latest'
+        run: Get-Content docs/audits/latest-quality-gates-report.md -ErrorAction SilentlyContinue
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-gates-report-${{ matrix.os }}
+          path: docs/audits/latest-quality-gates-report.md
+          if-no-files-found: error

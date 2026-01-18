@@ -12,6 +12,7 @@ Usage:
 import re
 import json
 import os
+import sys
 from pathlib import Path
 from typing import List, Dict, Optional
 
@@ -19,6 +20,38 @@ from typing import List, Dict, Optional
 SCRIPT_DIR = Path(__file__).parent
 EXECUTION_PLAN_PATH = SCRIPT_DIR / "../../docs/planning/PHASE-0-notion-to-github-execution-plan.md"
 OUTPUT_PATH = SCRIPT_DIR / "issues.json"
+
+def _load_canonical_defaults() -> Dict[str, List[str]]:
+    repo_root = SCRIPT_DIR.parents[1]
+    sys.path.insert(0, str(repo_root))
+    try:
+        from scripts.quality import canonical
+
+        return {
+            "phases": list(canonical.PHASES),
+            "domains": list(canonical.DOMAINS),
+            "priorities": list(canonical.PRIORITIES),
+        }
+    except Exception:
+        return {
+            "phases": ["PHASE 0", "PHASE 1", "PHASE 2", "PHASE 3", "PHASE 4"],
+            "domains": [
+                "Catalog",
+                "Inventory",
+                "Ordering",
+                "Fulfillment",
+                "Routing",
+                "Partner",
+                "Workforce",
+                "Operations",
+                "Compliance",
+                "Platform",
+            ],
+            "priorities": ["Critical", "High", "Medium", "Low"],
+        }
+
+
+_CANONICAL = _load_canonical_defaults()
 
 # Milestone mapping from phase labels to milestone titles
 MILESTONE_MAP = {
@@ -31,33 +64,33 @@ MILESTONE_MAP = {
 
 # Phase to single-select value mapping
 PHASE_MAP = {
-    "phase:0-bootstrap": "PHASE 0",
-    "phase:1-foundation": "PHASE 1",
-    "phase:2-mvp": "PHASE 2",
-    "phase:3-scale": "PHASE 3",
-    "phase:4-global": "PHASE 4",
+    "phase:0-bootstrap": _CANONICAL["phases"][0],
+    "phase:1-foundation": _CANONICAL["phases"][1],
+    "phase:2-mvp": _CANONICAL["phases"][2],
+    "phase:3-scale": _CANONICAL["phases"][3],
+    "phase:4-global": _CANONICAL["phases"][4],
 }
 
 # Domain label to single-select value mapping
 DOMAIN_MAP = {
-    "domain:catalog": "Catalog",
-    "domain:inventory": "Inventory",
-    "domain:ordering": "Ordering",
-    "domain:fulfillment": "Fulfillment",
-    "domain:routing": "Routing",
-    "domain:partner": "Partner",
-    "domain:workforce": "Workforce",
-    "domain:operations": "Operations",
-    "domain:compliance": "Compliance",
-    "domain:platform": "Platform",
+    "domain:catalog": _CANONICAL["domains"][0],
+    "domain:inventory": _CANONICAL["domains"][1],
+    "domain:ordering": _CANONICAL["domains"][2],
+    "domain:fulfillment": _CANONICAL["domains"][3],
+    "domain:routing": _CANONICAL["domains"][4],
+    "domain:partner": _CANONICAL["domains"][5],
+    "domain:workforce": _CANONICAL["domains"][6],
+    "domain:operations": _CANONICAL["domains"][7],
+    "domain:compliance": _CANONICAL["domains"][8],
+    "domain:platform": _CANONICAL["domains"][9],
 }
 
 # Priority label to single-select value mapping
 PRIORITY_MAP = {
-    "priority:critical": "Critical",
-    "priority:high": "High",
-    "priority:medium": "Medium",
-    "priority:low": "Low",
+    "priority:critical": _CANONICAL["priorities"][0],
+    "priority:high": _CANONICAL["priorities"][1],
+    "priority:medium": _CANONICAL["priorities"][2],
+    "priority:low": _CANONICAL["priorities"][3],
 }
 
 
@@ -229,9 +262,9 @@ Master tracking issue for PHASE 0 execution
         "labels": ["phase:0-bootstrap", "type:documentation", "priority:critical"],
         "milestone": "PHASE 0: Bootstrap & Planning",
         "project": {
-            "phase": "PHASE 0",
+            "phase": _CANONICAL["phases"][0],
             "domain": None,
-            "priority": "Critical",
+            "priority": _CANONICAL["priorities"][0],
             "notion_reference": "https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/index.md, https://github.com/Abuzhor/smart-grocery-logistics-platform/blob/main/docs/notion-export/00-executive-summary.md"
         }
     }
