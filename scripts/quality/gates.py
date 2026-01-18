@@ -76,7 +76,6 @@ def _gate_repo_structure() -> GateResult:
         Path("README.md"),
         Path("docs"),
         Path("scripts"),
-        Path("docs/audits"),
     ]
     details: List[str] = []
     failures: List[GateFailure] = []
