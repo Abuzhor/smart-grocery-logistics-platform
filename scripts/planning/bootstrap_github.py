@@ -21,6 +21,7 @@ import sys
 import json
 import requests
 import time
+import re
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
@@ -551,33 +552,19 @@ def get_project_items(client: GitHubGraphQLClient, project_id: str) -> List[Dict
 
 def set_project_field_value(client: GitHubGraphQLClient, project_id: str, item_id: str, field_id: str, value: Any) -> bool:
     """Set a single select or text field value on a project item"""
-    
-    # For single select fields, value is the option ID
-    # For text fields, value is the text string
-    if isinstance(value, str) and not value.startswith("PVTSSF"):  # Not an option ID
-        # Text field
-        mutation = """
-        mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: String!) {
-          updateProjectV2ItemFieldValue(input: {
-            projectId: $projectId,
-            itemId: $itemId,
-            fieldId: $fieldId,
-            value: {text: $value}
-          }) {
-            projectV2Item {
-              id
-            }
-          }
-        }
-        """
-        result = client.query(mutation, {
-            "projectId": project_id,
-            "itemId": item_id,
-            "fieldId": field_id,
-            "value": value
-        })
-    else:
-        # Single select field
+    return set_project_field_value_typed(client, project_id, item_id, field_id, value, "text")
+
+
+def set_project_field_value_typed(
+    client: GitHubGraphQLClient,
+    project_id: str,
+    item_id: str,
+    field_id: str,
+    value: Any,
+    value_type: str
+) -> bool:
+    """Set a field value with explicit type: 'single_select' or 'text'."""
+    if value_type == "single_select":
         mutation = """
         mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
           updateProjectV2ItemFieldValue(input: {
@@ -592,11 +579,32 @@ def set_project_field_value(client: GitHubGraphQLClient, project_id: str, item_i
           }
         }
         """
-        result = client.query(mutation, {
+        client.query(mutation, {
             "projectId": project_id,
             "itemId": item_id,
             "fieldId": field_id,
             "optionId": value
+        })
+    else:
+        mutation = """
+        mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $value: String!) {
+          updateProjectV2ItemFieldValue(input: {
+            projectId: $projectId,
+            itemId: $itemId,
+            fieldId: $fieldId,
+            value: {text: $value}
+          }) {
+            projectV2Item {
+              id
+            }
+          }
+        }
+        """
+        client.query(mutation, {
+            "projectId": project_id,
+            "itemId": item_id,
+            "fieldId": field_id,
+            "value": value
         })
     
     return True
@@ -610,6 +618,69 @@ def get_field_option_id(fields: List[Dict], field_name: str, option_name: str) -
                 if option["name"] == option_name:
                     return option["id"]
     return None
+
+
+def normalize_phase(value: Optional[str]) -> Optional[str]:
+  if not value:
+    return None
+  raw = str(value).strip()
+  upper = raw.upper()
+  if upper.startswith("PHASE ") and len(upper) >= 7:
+    digit = upper.split("PHASE ", 1)[1][:1]
+    if digit in {"0", "1", "2", "3", "4"}:
+      return f"PHASE {digit}"
+  if "PHASE" in upper or "PHASE" in raw:
+    match = re.search(r"(\d)", upper)
+    if match and match.group(1) in {"0", "1", "2", "3", "4"}:
+      return f"PHASE {match.group(1)}"
+  if raw.isdigit() and raw in {"0", "1", "2", "3", "4"}:
+    return f"PHASE {raw}"
+  return None
+
+
+def normalize_priority(value: Optional[str]) -> Optional[str]:
+  if not value:
+    return None
+  raw = str(value).strip().lower()
+  if raw.startswith("priority:"):
+    raw = raw.split(":", 1)[1].strip()
+  mapping = {
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  }
+  return mapping.get(raw)
+
+
+def normalize_domain(value: Optional[str]) -> Optional[str]:
+  if not value:
+    return None
+  raw = str(value).strip().lower()
+  if raw.startswith("domain:"):
+    raw = raw.split(":", 1)[1].strip()
+  mapping = {
+    "catalog": "Catalog",
+    "inventory": "Inventory",
+    "ordering": "Ordering",
+    "fulfillment": "Fulfillment",
+    "routing": "Routing",
+    "partner": "Partner",
+    "workforce": "Workforce",
+    "operations": "Operations",
+    "compliance": "Compliance",
+    "platform": "Platform"
+  }
+  return mapping.get(raw)
+
+
+def build_field_maps(fields: List[Dict]) -> tuple[Dict[str, str], Dict[str, Dict[str, str]]]:
+  field_ids = {field["name"]: field["id"] for field in fields}
+  option_ids: Dict[str, Dict[str, str]] = {}
+  for field in fields:
+    if "options" in field and field.get("name"):
+      option_ids[field["name"]] = {opt["name"]: opt["id"] for opt in field.get("options", [])}
+  return field_ids, option_ids
 
 def main():
     """Main execution"""
@@ -760,14 +831,18 @@ def main():
     print("Setting up custom fields...")
     existing_fields = get_project_fields(graphql_client, project_id)
     existing_field_names = {field["name"] for field in existing_fields}
+
+    def refresh_project_fields() -> None:
+      nonlocal existing_fields, existing_field_names
+      existing_fields = get_project_fields(graphql_client, project_id)
+      existing_field_names = {field["name"] for field in existing_fields}
     
     # Phase field
     phase_options = ["PHASE 0", "PHASE 1", "PHASE 2", "PHASE 3", "PHASE 4"]
     if "Phase" not in existing_field_names:
-        create_single_select_field(graphql_client, project_id, "Phase", phase_options)
-        print_color(Colors.GREEN, "  ✓ Created field: Phase")
-        # Refresh fields
-        existing_fields = get_project_fields(graphql_client, project_id)
+      create_single_select_field(graphql_client, project_id, "Phase", phase_options)
+      print_color(Colors.GREEN, "  ✓ Created field: Phase")
+      refresh_project_fields()
     else:
         # Check if all options exist, add missing ones
         phase_field = next(f for f in existing_fields if f["name"] == "Phase")
@@ -775,10 +850,9 @@ def main():
         missing_options = [opt for opt in phase_options if opt not in existing_options]
         if missing_options:
             # Add missing options
-            all_options = list(existing_options) + missing_options
-            add_single_select_options(graphql_client, project_id, phase_field["id"], all_options)
+        add_single_select_options(graphql_client, project_id, phase_field["id"], missing_options)
             print_color(Colors.YELLOW, f"  ↻ Field exists: Phase (added {len(missing_options)} missing options)")
-            existing_fields = get_project_fields(graphql_client, project_id)
+        refresh_project_fields()
         else:
             print_color(Colors.YELLOW, "  ↻ Field exists: Phase")
     
@@ -788,46 +862,44 @@ def main():
         "Partner", "Workforce", "Operations", "Compliance", "Platform"
     ]
     if "Domain" not in existing_field_names:
-        create_single_select_field(graphql_client, project_id, "Domain", domain_options)
-        print_color(Colors.GREEN, "  ✓ Created field: Domain")
-        existing_fields = get_project_fields(graphql_client, project_id)
+      create_single_select_field(graphql_client, project_id, "Domain", domain_options)
+      print_color(Colors.GREEN, "  ✓ Created field: Domain")
+      refresh_project_fields()
     else:
         # Check if all options exist, add missing ones
         domain_field = next(f for f in existing_fields if f["name"] == "Domain")
         existing_options = {opt["name"] for opt in domain_field.get("options", [])}
         missing_options = [opt for opt in domain_options if opt not in existing_options]
         if missing_options:
-            all_options = list(existing_options) + missing_options
-            add_single_select_options(graphql_client, project_id, domain_field["id"], all_options)
+        add_single_select_options(graphql_client, project_id, domain_field["id"], missing_options)
             print_color(Colors.YELLOW, f"  ↻ Field exists: Domain (added {len(missing_options)} missing options)")
-            existing_fields = get_project_fields(graphql_client, project_id)
+        refresh_project_fields()
         else:
             print_color(Colors.YELLOW, "  ↻ Field exists: Domain")
     
     # Priority field
     priority_options = ["Critical", "High", "Medium", "Low"]
     if "Priority" not in existing_field_names:
-        create_single_select_field(graphql_client, project_id, "Priority", priority_options)
-        print_color(Colors.GREEN, "  ✓ Created field: Priority")
-        existing_fields = get_project_fields(graphql_client, project_id)
+      create_single_select_field(graphql_client, project_id, "Priority", priority_options)
+      print_color(Colors.GREEN, "  ✓ Created field: Priority")
+      refresh_project_fields()
     else:
         # Check if all options exist, add missing ones
         priority_field = next(f for f in existing_fields if f["name"] == "Priority")
         existing_options = {opt["name"] for opt in priority_field.get("options", [])}
         missing_options = [opt for opt in priority_options if opt not in existing_options]
         if missing_options:
-            all_options = list(existing_options) + missing_options
-            add_single_select_options(graphql_client, project_id, priority_field["id"], all_options)
+        add_single_select_options(graphql_client, project_id, priority_field["id"], missing_options)
             print_color(Colors.YELLOW, f"  ↻ Field exists: Priority (added {len(missing_options)} missing options)")
-            existing_fields = get_project_fields(graphql_client, project_id)
+        refresh_project_fields()
         else:
             print_color(Colors.YELLOW, "  ↻ Field exists: Priority")
     
     # Notion Reference field
     if "Notion Reference" not in existing_field_names:
-        create_text_field(graphql_client, project_id, "Notion Reference")
-        print_color(Colors.GREEN, "  ✓ Created field: Notion Reference")
-        existing_fields = get_project_fields(graphql_client, project_id)
+      create_text_field(graphql_client, project_id, "Notion Reference")
+      print_color(Colors.GREEN, "  ✓ Created field: Notion Reference")
+      refresh_project_fields()
     else:
         print_color(Colors.YELLOW, "  ↻ Field exists: Notion Reference")
     
@@ -850,8 +922,9 @@ def main():
     added_count = 0
     field_update_count = 0
     
-    # Get field IDs
-    field_ids = {field["name"]: field["id"] for field in existing_fields}
+    # Re-fetch fields to ensure fresh option IDs
+    refresh_project_fields()
+    field_ids, option_ids = build_field_maps(existing_fields)
     
     for issue_def in issues_data:
         if "_github_number" not in issue_def:
@@ -877,34 +950,92 @@ def main():
             project_meta = issue_def.get("project", {})
             
             # Set Phase
-            if project_meta.get("phase") and "Phase" in field_ids:
-                option_id = get_field_option_id(existing_fields, "Phase", project_meta["phase"])
+            if "Phase" in field_ids:
+              phase_value = normalize_phase(project_meta.get("phase"))
+              if phase_value:
+                option_id = option_ids.get("Phase", {}).get(phase_value)
                 if option_id:
-                    set_project_field_value(graphql_client, project_id, item_id, field_ids["Phase"], option_id)
-                    field_update_count += 1
-                    time.sleep(0.1)
+                  set_project_field_value_typed(
+                    graphql_client, project_id, item_id, field_ids["Phase"], option_id, "single_select"
+                  )
+                  field_update_count += 1
+                  time.sleep(0.1)
+                else:
+                  available = ", ".join(sorted(option_ids.get("Phase", {}).keys()))
+                  warnings.append(
+                    f"Missing Phase option ID for '{phase_value}' on issue #{issue_number}. Available: [{available}]"
+                  )
+                  print_color(
+                    Colors.YELLOW,
+                    f"  ! Phase option not found: {phase_value} (issue #{issue_number}). Available: [{available}]"
+                  )
+              elif project_meta.get("phase"):
+                warnings.append(
+                  f"Unrecognized Phase value '{project_meta.get('phase')}' for issue #{issue_number}"
+                )
             
             # Set Domain
-            if project_meta.get("domain") and "Domain" in field_ids:
-                option_id = get_field_option_id(existing_fields, "Domain", project_meta["domain"])
+            if "Domain" in field_ids:
+              domain_value = normalize_domain(project_meta.get("domain"))
+              if domain_value:
+                option_id = option_ids.get("Domain", {}).get(domain_value)
                 if option_id:
-                    set_project_field_value(graphql_client, project_id, item_id, field_ids["Domain"], option_id)
-                    field_update_count += 1
-                    time.sleep(0.1)
+                  set_project_field_value_typed(
+                    graphql_client, project_id, item_id, field_ids["Domain"], option_id, "single_select"
+                  )
+                  field_update_count += 1
+                  time.sleep(0.1)
+                else:
+                  available = ", ".join(sorted(option_ids.get("Domain", {}).keys()))
+                  warnings.append(
+                    f"Missing Domain option ID for '{domain_value}' on issue #{issue_number}. Available: [{available}]"
+                  )
+                  print_color(
+                    Colors.YELLOW,
+                    f"  ! Domain option not found: {domain_value} (issue #{issue_number}). Available: [{available}]"
+                  )
+              elif project_meta.get("domain"):
+                warnings.append(
+                  f"Unrecognized Domain value '{project_meta.get('domain')}' for issue #{issue_number}"
+                )
             
             # Set Priority
-            if project_meta.get("priority") and "Priority" in field_ids:
-                option_id = get_field_option_id(existing_fields, "Priority", project_meta["priority"])
+            if "Priority" in field_ids:
+              priority_value = normalize_priority(project_meta.get("priority"))
+              if priority_value:
+                option_id = option_ids.get("Priority", {}).get(priority_value)
                 if option_id:
-                    set_project_field_value(graphql_client, project_id, item_id, field_ids["Priority"], option_id)
-                    field_update_count += 1
-                    time.sleep(0.1)
+                  set_project_field_value_typed(
+                    graphql_client, project_id, item_id, field_ids["Priority"], option_id, "single_select"
+                  )
+                  field_update_count += 1
+                  time.sleep(0.1)
+                else:
+                  available = ", ".join(sorted(option_ids.get("Priority", {}).keys()))
+                  warnings.append(
+                    f"Missing Priority option ID for '{priority_value}' on issue #{issue_number}. Available: [{available}]"
+                  )
+                  print_color(
+                    Colors.YELLOW,
+                    f"  ! Priority option not found: {priority_value} (issue #{issue_number}). Available: [{available}]"
+                  )
+              elif project_meta.get("priority"):
+                warnings.append(
+                  f"Unrecognized Priority value '{project_meta.get('priority')}' for issue #{issue_number}"
+                )
             
             # Set Notion Reference
             if project_meta.get("notion_reference") and "Notion Reference" in field_ids:
-                set_project_field_value(graphql_client, project_id, item_id, field_ids["Notion Reference"], project_meta["notion_reference"])
-                field_update_count += 1
-                time.sleep(0.1)
+              set_project_field_value_typed(
+                graphql_client,
+                project_id,
+                item_id,
+                field_ids["Notion Reference"],
+                project_meta["notion_reference"],
+                "text"
+              )
+              field_update_count += 1
+              time.sleep(0.1)
         
         except Exception as e:
             warnings.append(f"Failed to add/update project item for issue #{issue_number}: {str(e)}")
@@ -932,6 +1063,7 @@ def main():
     print_color(Colors.GREEN, f"Project Board:")
     print(f"  Added to project: {added_count}")
     print(f"  Field values updated: {field_update_count}")
+    print(f"  Warnings: {len(warnings)}")
     print()
     
     if created_issues:
