@@ -91,8 +91,9 @@ python3 scripts/planning/bootstrap_github.py
 - ✓ Creates/updates all 40 issues from `issues.json`
 - ✓ Authoritative label sync (removes labels not in the intended set)
 - ✓ **Supports both User and Organization owners** (auto-detects)
-- ✓ Creates Projects v2 board with custom fields
-- ✓ Adds all 40 issues to the project
+- ✓ **Fully automated Projects v2 setup**: Creates project board with custom fields
+- ✓ **Idempotent field management**: Reuses existing fields and adds missing options only
+- ✓ Adds all 40 issues to the project (no duplicates on re-run)
 - ✓ Sets Phase, Domain, Priority, and Notion Reference fields for each issue
 - ✓ Handles pagination and rate limits
 - ✓ Prints detailed summary (created, updated, skipped counts)
@@ -115,8 +116,10 @@ python3 scripts/planning/bootstrap_github.py
    - Notion Reference (Text): Links to source documentation in `docs/notion-export/`
 
 **Idempotency:**
-- First run: Creates all 40 issues
+- First run: Creates all 40 issues, project board, and custom fields
 - Second run: Updates only if content has changed (body, labels, milestone)
+- Field setup: Reuses existing fields and options, adds missing options only
+- Project items: Adds issues to project only if not already present (no duplicates)
 - Shows detailed output: created, updated, and skipped counts
 
 ## Execution Order
@@ -190,13 +193,16 @@ python3 scripts/planning/generate_issues_json.py
 
 ### GraphQL API Errors
 
+**Projects v2 automation is now fully working and automated.** No manual UI steps required.
+
 If Projects v2 creation fails:
 - Ensure you have the correct permissions (owner or admin)
 - Check that the repository exists
 - Verify the `GH_TOKEN` has `project` scope
 - For personal repos (user), the token must have `project`, `repo` scopes
 - For org repos, the token must have `project`, `repo`, `read:org` scopes
-- The script now auto-detects whether the owner is a User or Organization
+- The script auto-detects whether the owner is a User or Organization
+- Single-select field options now include required `description` field (fixed)
 
 ### Rate Limiting
 

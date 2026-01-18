@@ -411,7 +411,8 @@ def create_single_select_field(client: GitHubGraphQLClient, project_id: str, nam
     }
     """
     
-    option_inputs = [{"name": opt, "color": "GRAY"} for opt in options]
+    # CRITICAL: description cannot be null in ProjectV2SingleSelectFieldOptionInput
+    option_inputs = [{"name": opt, "color": "GRAY", "description": ""} for opt in options]
     
     result = client.query(mutation, {
         "projectId": project_id,
@@ -446,6 +447,40 @@ def create_text_field(client: GitHubGraphQLClient, project_id: str, name: str) -
     })
     
     return result["createProjectV2Field"]["projectV2Field"]
+
+def add_single_select_options(client: GitHubGraphQLClient, project_id: str, field_id: str, options: List[str]) -> Dict:
+    """Add new options to an existing single select field (idempotent)"""
+    mutation = """
+    mutation($projectId: ID!, $fieldId: ID!, $options: [ProjectV2SingleSelectFieldOptionInput!]!) {
+      updateProjectV2Field(input: {
+        projectId: $projectId,
+        fieldId: $fieldId,
+        singleSelectOptions: $options
+      }) {
+        projectV2Field {
+          ... on ProjectV2SingleSelectField {
+            id
+            name
+            options {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+    """
+    
+    # CRITICAL: description cannot be null in ProjectV2SingleSelectFieldOptionInput
+    option_inputs = [{"name": opt, "color": "GRAY", "description": ""} for opt in options]
+    
+    result = client.query(mutation, {
+        "projectId": project_id,
+        "fieldId": field_id,
+        "options": option_inputs
+    })
+    
+    return result["updateProjectV2Field"]["projectV2Field"]
 
 def get_repository_issues(client: GitHubGraphQLClient, owner: str, repo: str, limit: int = 100) -> List[Dict]:
     """Get repository issues"""
@@ -721,41 +756,72 @@ def main():
     project_url = project["url"]
     print()
     
-    # Create custom fields
+    # Create custom fields (idempotent with option checking)
     print("Setting up custom fields...")
     existing_fields = get_project_fields(graphql_client, project_id)
     existing_field_names = {field["name"] for field in existing_fields}
     
     # Phase field
+    phase_options = ["PHASE 0", "PHASE 1", "PHASE 2", "PHASE 3", "PHASE 4"]
     if "Phase" not in existing_field_names:
-        phase_options = ["PHASE 0", "PHASE 1", "PHASE 2", "PHASE 3", "PHASE 4"]
         create_single_select_field(graphql_client, project_id, "Phase", phase_options)
         print_color(Colors.GREEN, "  ✓ Created field: Phase")
         # Refresh fields
         existing_fields = get_project_fields(graphql_client, project_id)
     else:
-        print_color(Colors.YELLOW, "  ↻ Field exists: Phase")
+        # Check if all options exist, add missing ones
+        phase_field = next(f for f in existing_fields if f["name"] == "Phase")
+        existing_options = {opt["name"] for opt in phase_field.get("options", [])}
+        missing_options = [opt for opt in phase_options if opt not in existing_options]
+        if missing_options:
+            # Add missing options
+            all_options = list(existing_options) + missing_options
+            add_single_select_options(graphql_client, project_id, phase_field["id"], all_options)
+            print_color(Colors.YELLOW, f"  ↻ Field exists: Phase (added {len(missing_options)} missing options)")
+            existing_fields = get_project_fields(graphql_client, project_id)
+        else:
+            print_color(Colors.YELLOW, "  ↻ Field exists: Phase")
     
     # Domain field
+    domain_options = [
+        "Catalog", "Inventory", "Ordering", "Fulfillment", "Routing",
+        "Partner", "Workforce", "Operations", "Compliance", "Platform"
+    ]
     if "Domain" not in existing_field_names:
-        domain_options = [
-            "Catalog", "Inventory", "Ordering", "Fulfillment", "Routing",
-            "Partner", "Workforce", "Operations", "Compliance", "Platform"
-        ]
         create_single_select_field(graphql_client, project_id, "Domain", domain_options)
         print_color(Colors.GREEN, "  ✓ Created field: Domain")
         existing_fields = get_project_fields(graphql_client, project_id)
     else:
-        print_color(Colors.YELLOW, "  ↻ Field exists: Domain")
+        # Check if all options exist, add missing ones
+        domain_field = next(f for f in existing_fields if f["name"] == "Domain")
+        existing_options = {opt["name"] for opt in domain_field.get("options", [])}
+        missing_options = [opt for opt in domain_options if opt not in existing_options]
+        if missing_options:
+            all_options = list(existing_options) + missing_options
+            add_single_select_options(graphql_client, project_id, domain_field["id"], all_options)
+            print_color(Colors.YELLOW, f"  ↻ Field exists: Domain (added {len(missing_options)} missing options)")
+            existing_fields = get_project_fields(graphql_client, project_id)
+        else:
+            print_color(Colors.YELLOW, "  ↻ Field exists: Domain")
     
     # Priority field
+    priority_options = ["Critical", "High", "Medium", "Low"]
     if "Priority" not in existing_field_names:
-        priority_options = ["Critical", "High", "Medium", "Low"]
         create_single_select_field(graphql_client, project_id, "Priority", priority_options)
         print_color(Colors.GREEN, "  ✓ Created field: Priority")
         existing_fields = get_project_fields(graphql_client, project_id)
     else:
-        print_color(Colors.YELLOW, "  ↻ Field exists: Priority")
+        # Check if all options exist, add missing ones
+        priority_field = next(f for f in existing_fields if f["name"] == "Priority")
+        existing_options = {opt["name"] for opt in priority_field.get("options", [])}
+        missing_options = [opt for opt in priority_options if opt not in existing_options]
+        if missing_options:
+            all_options = list(existing_options) + missing_options
+            add_single_select_options(graphql_client, project_id, priority_field["id"], all_options)
+            print_color(Colors.YELLOW, f"  ↻ Field exists: Priority (added {len(missing_options)} missing options)")
+            existing_fields = get_project_fields(graphql_client, project_id)
+        else:
+            print_color(Colors.YELLOW, "  ↻ Field exists: Priority")
     
     # Notion Reference field
     if "Notion Reference" not in existing_field_names:

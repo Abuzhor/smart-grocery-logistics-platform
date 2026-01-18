@@ -73,12 +73,13 @@ This document tracks the validation and testing status of the PHASE 0 bootstrap 
   - [ ] Bodies (full markdown with objectives, acceptance criteria, KPI refs, sources)
   - [ ] Labels (phase, domain, type, priority, gates as specified)
   - [ ] Milestones (PHASE 0-4 as specified)
-- [ ] Projects v2 board created successfully (or reuses existing)
+- [ ] **Projects v2 board created successfully (fully automated, no manual UI steps)**
 - [ ] Custom fields created:
   - [ ] Phase (Single select with 5 options)
   - [ ] Domain (Single select with 10 options)
   - [ ] Priority (Single select with 4 options)
   - [ ] Notion Reference (Text field)
+- [ ] **Field creation includes required description field (GraphQL error fixed)**
 - [ ] All 40 issues added to project board
 - [ ] Project field values set for all 40 issues:
   - [ ] Phase field populated
@@ -104,7 +105,10 @@ This document tracks the validation and testing status of the PHASE 0 bootstrap 
 - [ ] Created count: 0
 - [ ] Updated count: 0
 - [ ] No duplicate issues created
-- [ ] Project items not duplicated
+- [ ] **Project reused (not recreated)**
+- [ ] **Fields reused (not duplicated)**
+- [ ] **Field options reused (no duplicates)**
+- [ ] Project items not duplicated (issues not re-added)
 - [ ] Field values retained
 
 ### Step 5: bootstrap_github.py Execution (Update Test)
@@ -120,9 +124,11 @@ Manually edit one issue's body or labels in GitHub UI, then re-run:
 
 ## Manual Configuration (Post-Script)
 
-After running the scripts, manually configure the following in the GitHub UI:
+**Note**: Projects v2 automation is now fully working. The project board and custom fields are created automatically with NO manual UI steps required.
 
-### Projects v2 Board Configuration
+After running the scripts, you may optionally configure the following in the GitHub UI for enhanced workflow:
+
+### Projects v2 Board Configuration (Optional)
 - [ ] Configure Status workflow automation:
   - [ ] "Backlog" - Default for new items
   - [ ] "Ready" - Manual move from Backlog
@@ -237,6 +243,7 @@ PHASE 0 bootstrap is successful when:
   - [ ] PHASE 3: 5 issues
   - [ ] PHASE 4: 6 issues
 - [ ] Projects v2 board is created and configured
+- [ ] **All custom fields created automatically (Phase, Domain, Priority, Notion Reference)**
 - [ ] All 40 issues are added to project board
 - [ ] All project custom fields set for all 40 issues
 - [ ] Traceability is complete (all issues → Notion export)
