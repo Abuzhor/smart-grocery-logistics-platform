@@ -7,6 +7,8 @@ docs/audits/latest-quality-gates-report.md.
 from __future__ import annotations
 
 import datetime as _dt
+import importlib.util
+import json
 import os
 import platform
 import py_compile
@@ -14,10 +16,29 @@ import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, List, Optional, Sequence
+from typing import Callable, Iterable, List, Optional, Sequence
 
 
 REPORT_PATH = Path("docs/audits/latest-quality-gates-report.md")
+ISSUES_PATH = Path("scripts/planning/issues.json")
+
+
+def _load_canonical_module():
+    try:
+        from scripts.quality import canonical as module
+
+        return module
+    except Exception:
+        canonical_path = Path(__file__).with_name("canonical.py")
+        spec = importlib.util.spec_from_file_location("canonical", canonical_path)
+        if spec is None or spec.loader is None:
+            raise ImportError("Unable to load canonical definitions.")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+
+canonical = _load_canonical_module()
 
 
 @dataclass
@@ -69,6 +90,15 @@ def _format_failure(failure: GateFailure) -> str:
     if failure.line is None:
         return f"- {failure.file}: {failure.message}"
     return f"- {failure.file}:{failure.line} — {failure.message}"
+
+
+def _find_line_number(lines: List[str], needle: str) -> Optional[int]:
+    if not needle:
+        return None
+    for idx, line in enumerate(lines, start=1):
+        if needle in line:
+            return idx
+    return None
 
 
 def _gate_repo_structure() -> GateResult:
@@ -175,10 +205,295 @@ def _gate_planning_compile() -> GateResult:
     )
 
 
+def _gate_canonical_self_check() -> GateResult:
+    failures: List[GateFailure] = []
+    details: List[str] = []
+
+    checks = [
+        ("phases", canonical.PHASES, canonical.normalize_phase),
+        ("domains", canonical.DOMAINS, canonical.normalize_domain),
+        ("priorities", canonical.PRIORITIES, canonical.normalize_priority),
+    ]
+
+    for label, values, normalize in checks:
+        details.append(f"{label}: {len(values)}")
+        if not values:
+            failures.append(
+                GateFailure(
+                    file="scripts/quality/canonical.py",
+                    line=None,
+                    message=f"Canonical {label} list is empty.",
+                )
+            )
+            continue
+        if len(set(values)) != len(values):
+            failures.append(
+                GateFailure(
+                    file="scripts/quality/canonical.py",
+                    line=None,
+                    message=f"Canonical {label} list contains duplicates.",
+                )
+            )
+        for value in values:
+            normalized = normalize(value)
+            if normalized != value:
+                failures.append(
+                    GateFailure(
+                        file="scripts/quality/canonical.py",
+                        line=None,
+                        message=(
+                            f"Canonical {label} value '{value}' normalizes to "
+                            f"'{normalized}'."
+                        ),
+                    )
+                )
+
+    if failures:
+        return GateResult(
+            gate_id="3",
+            name="Canonical self-check",
+            status="FAIL",
+            message="Canonical lists failed validation.",
+            details=details,
+            failures=failures,
+        )
+
+    return GateResult(
+        gate_id="3",
+        name="Canonical self-check",
+        status="PASS",
+        message="Canonical lists validated.",
+        details=details,
+    )
+
+
+def _format_allowed(values: Iterable[str]) -> str:
+    return ", ".join(values)
+
+
+def _gate_canonical_drift() -> GateResult:
+    if not ISSUES_PATH.exists():
+        return GateResult(
+            gate_id="4",
+            name="Canonical drift detection",
+            status="FAIL",
+            message="issues.json not found.",
+            details=[f"path: {ISSUES_PATH.as_posix()}"],
+            failures=[
+                GateFailure(
+                    file=ISSUES_PATH.as_posix(),
+                    line=None,
+                    message="Expected file is missing.",
+                )
+            ],
+        )
+
+    raw = ISSUES_PATH.read_text(encoding="utf-8")
+    try:
+        issues = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        return GateResult(
+            gate_id="4",
+            name="Canonical drift detection",
+            status="FAIL",
+            message="issues.json is not valid JSON.",
+            details=[f"path: {ISSUES_PATH.as_posix()}"],
+            failures=[
+                GateFailure(
+                    file=ISSUES_PATH.as_posix(),
+                    line=exc.lineno,
+                    message=exc.msg,
+                )
+            ],
+        )
+
+    if not isinstance(issues, list):
+        return GateResult(
+            gate_id="4",
+            name="Canonical drift detection",
+            status="FAIL",
+            message="issues.json must contain a list of issues.",
+            details=[f"path: {ISSUES_PATH.as_posix()}"],
+            failures=[
+                GateFailure(
+                    file=ISSUES_PATH.as_posix(),
+                    line=None,
+                    message="Top-level JSON is not a list.",
+                )
+            ],
+        )
+
+    lines = raw.splitlines()
+    failures: List[GateFailure] = []
+    warnings: List[GateFailure] = []
+
+    for idx, issue in enumerate(issues, start=1):
+        if not isinstance(issue, dict):
+            failures.append(
+                GateFailure(
+                    file=ISSUES_PATH.as_posix(),
+                    line=None,
+                    message=f"Issue #{idx} is not an object.",
+                )
+            )
+            continue
+
+        title = issue.get("title")
+        if not title:
+            failures.append(
+                GateFailure(
+                    file=ISSUES_PATH.as_posix(),
+                    line=None,
+                    message=f"Issue #{idx} is missing a title.",
+                )
+            )
+            continue
+
+        line = _find_line_number(lines, f"\"title\": \"{title}\"")
+        project_meta = issue.get("project_meta")
+        if project_meta is None:
+            project_meta = issue.get("project")
+
+        if not isinstance(project_meta, dict):
+            failures.append(
+                GateFailure(
+                    file=ISSUES_PATH.as_posix(),
+                    line=line,
+                    message=f"Issue '{title}' is missing project metadata.",
+                )
+            )
+            continue
+
+        for key in ["phase", "domain", "priority", "notion_reference"]:
+            if key not in project_meta:
+                failures.append(
+                    GateFailure(
+                        file=ISSUES_PATH.as_posix(),
+                        line=line,
+                        message=f"Issue '{title}' missing project_meta.{key}.",
+                    )
+                )
+
+        phase = project_meta.get("phase")
+        domain = project_meta.get("domain")
+        priority = project_meta.get("priority")
+
+        if phase is not None:
+            normalized = canonical.normalize_phase(phase)
+            if normalized is None:
+                failures.append(
+                    GateFailure(
+                        file=ISSUES_PATH.as_posix(),
+                        line=line,
+                        message=(
+                            f"Issue '{title}' has invalid phase '{phase}'. "
+                            f"Allowed: {_format_allowed(canonical.PHASES)}."
+                        ),
+                    )
+                )
+            elif normalized != phase:
+                warnings.append(
+                    GateFailure(
+                        file=ISSUES_PATH.as_posix(),
+                        line=line,
+                        message=(
+                            f"Issue '{title}' phase '{phase}' normalizes to "
+                            f"'{normalized}'."
+                        ),
+                    )
+                )
+
+        if domain is not None:
+            normalized = canonical.normalize_domain(domain)
+            if normalized is None:
+                failures.append(
+                    GateFailure(
+                        file=ISSUES_PATH.as_posix(),
+                        line=line,
+                        message=(
+                            f"Issue '{title}' has invalid domain '{domain}'. "
+                            f"Allowed: {_format_allowed(canonical.DOMAINS)}."
+                        ),
+                    )
+                )
+            elif normalized != domain:
+                warnings.append(
+                    GateFailure(
+                        file=ISSUES_PATH.as_posix(),
+                        line=line,
+                        message=(
+                            f"Issue '{title}' domain '{domain}' normalizes to "
+                            f"'{normalized}'."
+                        ),
+                    )
+                )
+
+        if priority is not None:
+            normalized = canonical.normalize_priority(priority)
+            if normalized is None:
+                failures.append(
+                    GateFailure(
+                        file=ISSUES_PATH.as_posix(),
+                        line=line,
+                        message=(
+                            f"Issue '{title}' has invalid priority '{priority}'. "
+                            f"Allowed: {_format_allowed(canonical.PRIORITIES)}."
+                        ),
+                    )
+                )
+            elif normalized != priority:
+                warnings.append(
+                    GateFailure(
+                        file=ISSUES_PATH.as_posix(),
+                        line=line,
+                        message=(
+                            f"Issue '{title}' priority '{priority}' normalizes to "
+                            f"'{normalized}'."
+                        ),
+                    )
+                )
+
+    details = [
+        f"issues scanned: {len(issues)}",
+        f"warnings: {len(warnings)}",
+        f"failures: {len(failures)}",
+    ]
+
+    if failures:
+        return GateResult(
+            gate_id="4",
+            name="Canonical drift detection",
+            status="FAIL",
+            message="Drift detected in issues.json.",
+            details=details,
+            failures=failures + warnings,
+        )
+
+    if warnings:
+        return GateResult(
+            gate_id="4",
+            name="Canonical drift detection",
+            status="WARN",
+            message="Normalization drift detected in issues.json.",
+            details=details,
+            failures=warnings,
+        )
+
+    return GateResult(
+        gate_id="4",
+        name="Canonical drift detection",
+        status="PASS",
+        message="All canonical values are normalized.",
+        details=details,
+    )
+
+
 def _collect_gates() -> Sequence[Gate]:
     return [
         Gate(gate_id="1", name="Repo structure sanity", run=_gate_repo_structure),
         Gate(gate_id="2", name="Planning scripts compile", run=_gate_planning_compile),
+        Gate(gate_id="3", name="Canonical self-check", run=_gate_canonical_self_check),
+        Gate(gate_id="4", name="Canonical drift detection", run=_gate_canonical_drift),
     ]
 
 
