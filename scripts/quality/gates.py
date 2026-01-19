@@ -536,16 +536,16 @@ def _collect_gates() -> Sequence[Gate]:
             continue
         
         if gate_id in gate_implementations:
-            name, run_func = gate_implementations[gate_id]
+            default_name, run_func = gate_implementations[gate_id]
+            # Allow config to override the default name
+            name = gate_config.get("name", default_name)
             gates.append(Gate(gate_id=gate_id, name=name, run=run_func))
     
     # If no gates configured, fall back to all gates
     if not gates:
         return [
-            Gate(gate_id="1", name="Repo structure sanity", run=_gate_repo_structure),
-            Gate(gate_id="2", name="Planning scripts compile", run=_gate_planning_compile),
-            Gate(gate_id="3", name="Canonical self-check", run=_gate_canonical_self_check),
-            Gate(gate_id="4", name="Canonical drift detection", run=_gate_canonical_drift),
+            Gate(gate_id=gid, name=name, run=func)
+            for gid, (name, func) in gate_implementations.items()
         ]
     
     return gates
