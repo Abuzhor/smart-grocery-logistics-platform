@@ -2,19 +2,55 @@
 
 This repository uses a single entry point for quality gates to keep PHASE 0 stable and auditable.
 
-## Run locally
+## Configuration
 
-### PowerShell (Windows)
+Quality gates are configured via `scripts/quality/gates_config.json`. This JSON file defines:
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/quality/run_gates.ps1
+- `gates`: Array of gate configurations, each containing:
+  - `gate_id`: Unique identifier for the gate (e.g., "1", "2", "3", "4")
+  - `name`: Human-readable name of the gate
+  - `enabled`: Boolean flag to enable/disable the gate (default: true)
+- `report_path`: Path where the quality gates report will be written (default: "docs/audits/latest-quality-gates-report.md")
+
+Example configuration:
+```json
+{
+  "gates": [
+    {
+      "gate_id": "1",
+      "name": "Repo structure sanity",
+      "enabled": true
+    }
+  ],
+  "report_path": "docs/audits/latest-quality-gates-report.md"
+}
 ```
+
+## Run Locally
 
 ### Bash (Linux/macOS)
 
 ```bash
 scripts/quality/run_gates.sh
 ```
+
+This script will:
+- Detect the appropriate Python executable (python3 or python)
+- Execute the quality gates via `gates.py`
+- Return the exit code from gates.py (non-zero on failure)
+
+### PowerShell (Windows)
+
+```powershell
+powershell -File scripts/quality/run_gates.ps1
+```
+
+This script will:
+- Detect the appropriate Python executable (python or py launcher)
+- Execute the quality gates via `gates.py`
+- Return the exit code from gates.py (non-zero on failure)
+
+**Note**: The PowerShell script does NOT modify the global execution policy.
 
 ## Output
 
@@ -27,6 +63,8 @@ The report includes timestamp (UTC), commit SHA (best effort), OS, Python versio
 
 - Repo structure sanity (README.md, docs/, scripts/, docs/audits/).
 - Planning script compilation (scripts/planning/bootstrap_github.py and generate_issues_json.py).
+- Canonical self-check (validates canonical.py definitions).
+- Canonical drift detection (validates issues.json against canonical values).
 
 ## Drift Prevention
 
@@ -39,6 +77,17 @@ The drift gate:
 - FAILs when a value cannot be normalized to a canonical set.
 - Validates required project metadata fields but does not auto-edit issues.json.
 
-## CI
+## CI/CD Integration
 
-The workflow runs on pull requests and pushes to main for Windows and Linux. Reports are uploaded as artifacts even on failure.
+The quality gates workflow (`.github/workflows/quality-gates.yml`) runs on:
+- Pull requests
+- Pushes to the `main` branch
+
+The workflow:
+- Runs on both `ubuntu-latest` and `windows-latest` via a matrix strategy
+- Executes quality gates through the platform-specific scripts (`run_gates.sh` or `run_gates.ps1`)
+- **Always uploads the quality gates report as an artifact**, even when gates fail (using `if: always()`)
+- **Fails the job with a non-zero exit code** if any gate fails, blocking merge actions in CI/CD
+
+Artifact name: `quality-gates-report-{os}` (e.g., `quality-gates-report-ubuntu-latest`)
+

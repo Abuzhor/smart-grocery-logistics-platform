@@ -13,14 +13,5 @@ else
   exit 127
 fi
 
-set +e
 "${PYTHON_BIN}" scripts/quality/gates.py
-EXIT_CODE=$?
-set -e
-
-REPORT_PATH="docs/audits/latest-quality-gates-report.md"
-if [[ $EXIT_CODE -ne 0 && -f "$REPORT_PATH" ]]; then
-  cat "$REPORT_PATH"
-fi
-
-exit $EXIT_CODE
+exit $?

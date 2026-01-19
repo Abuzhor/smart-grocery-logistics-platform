@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Callable, Iterable, List, Optional, Sequence
 
 
+CONFIG_PATH = Path("scripts/quality/gates_config.json")
 REPORT_PATH = Path("docs/audits/latest-quality-gates-report.md")
 ISSUES_PATH = Path("scripts/planning/issues.json")
 
@@ -488,13 +489,66 @@ def _gate_canonical_drift() -> GateResult:
     )
 
 
+def _load_config() -> dict:
+    """Load quality gates configuration from gates_config.json."""
+    if not CONFIG_PATH.exists():
+        print(f"ERROR: Configuration file not found: {CONFIG_PATH.as_posix()}", file=sys.stderr)
+        sys.exit(1)
+    
+    try:
+        config_text = CONFIG_PATH.read_text(encoding="utf-8")
+        config = json.loads(config_text)
+    except json.JSONDecodeError as exc:
+        print(f"ERROR: Invalid JSON in {CONFIG_PATH.as_posix()}: {exc.msg}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as exc:
+        print(f"ERROR: Failed to load config from {CONFIG_PATH.as_posix()}: {exc}", file=sys.stderr)
+        sys.exit(1)
+    
+    return config
+
+
 def _collect_gates() -> Sequence[Gate]:
-    return [
-        Gate(gate_id="1", name="Repo structure sanity", run=_gate_repo_structure),
-        Gate(gate_id="2", name="Planning scripts compile", run=_gate_planning_compile),
-        Gate(gate_id="3", name="Canonical self-check", run=_gate_canonical_self_check),
-        Gate(gate_id="4", name="Canonical drift detection", run=_gate_canonical_drift),
-    ]
+    """Collect gates based on configuration."""
+    config = _load_config()
+    
+    # Update global REPORT_PATH if specified in config
+    global REPORT_PATH
+    if "report_path" in config:
+        REPORT_PATH = Path(config["report_path"])
+    
+    # Map gate IDs to their implementations
+    gate_implementations = {
+        "1": ("Repo structure sanity", _gate_repo_structure),
+        "2": ("Planning scripts compile", _gate_planning_compile),
+        "3": ("Canonical self-check", _gate_canonical_self_check),
+        "4": ("Canonical drift detection", _gate_canonical_drift),
+    }
+    
+    gates_config = config.get("gates", [])
+    gates = []
+    
+    for gate_config in gates_config:
+        gate_id = gate_config.get("gate_id")
+        enabled = gate_config.get("enabled", True)
+        
+        if not enabled:
+            continue
+        
+        if gate_id in gate_implementations:
+            name, run_func = gate_implementations[gate_id]
+            gates.append(Gate(gate_id=gate_id, name=name, run=run_func))
+    
+    # If no gates configured, fall back to all gates
+    if not gates:
+        return [
+            Gate(gate_id="1", name="Repo structure sanity", run=_gate_repo_structure),
+            Gate(gate_id="2", name="Planning scripts compile", run=_gate_planning_compile),
+            Gate(gate_id="3", name="Canonical self-check", run=_gate_canonical_self_check),
+            Gate(gate_id="4", name="Canonical drift detection", run=_gate_canonical_drift),
+        ]
+    
+    return gates
 
 
 def _write_report(results: List[GateResult]) -> None:
