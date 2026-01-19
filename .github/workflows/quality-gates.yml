@@ -29,11 +29,11 @@ jobs:
 
       - name: Run quality gates (Linux)
         if: matrix.os == 'ubuntu-latest'
-        run: python3 scripts/quality/gates.py
+        run: bash scripts/quality/run_gates.sh
 
       - name: Run quality gates (Windows)
         if: matrix.os == 'windows-latest'
-        run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/quality/run_gates.ps1
+        run: powershell -File scripts/quality/run_gates.ps1
 
       - name: Print quality gates report (Linux)
         if: always() && matrix.os == 'ubuntu-latest'

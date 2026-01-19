@@ -53,3 +53,6 @@ yarn-error.log*
 *.war
 *.ear
 target/
+
+# Quality gates reports
+docs/audits/latest-quality-gates-report.md

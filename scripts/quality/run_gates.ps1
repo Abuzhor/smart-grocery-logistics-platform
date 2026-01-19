@@ -18,9 +18,4 @@ if ($python) {
     }
 }
 
-$reportPath = "docs/audits/latest-quality-gates-report.md"
-if (Test-Path $reportPath) {
-    Get-Content -Raw $reportPath
-}
-
 exit $exitCode

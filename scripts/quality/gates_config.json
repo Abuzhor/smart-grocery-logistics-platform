@@ -1,0 +1,25 @@
+{
+  "gates": [
+    {
+      "gate_id": "1",
+      "name": "Repo structure sanity",
+      "enabled": true
+    },
+    {
+      "gate_id": "2",
+      "name": "Planning scripts compile",
+      "enabled": true
+    },
+    {
+      "gate_id": "3",
+      "name": "Canonical self-check",
+      "enabled": true
+    },
+    {
+      "gate_id": "4",
+      "name": "Canonical drift detection",
+      "enabled": true
+    }
+  ],
+  "report_path": "docs/audits/latest-quality-gates-report.md"
+}
