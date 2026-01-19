@@ -42,7 +42,7 @@ This script will:
 ### PowerShell (Windows)
 
 ```powershell
-powershell -File scripts/quality/run_gates.ps1
+pwsh -File scripts/quality/run_gates.ps1
 ```
 
 This script will:
